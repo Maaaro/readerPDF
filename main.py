@@ -13,7 +13,7 @@ print("Lista zrodel: ", sourceList)
 
 # def listofstringtosearch():
 
-df = pd.read_excel(r"C:/Users/mrowk/Downloads/test.xlsx", sheet_name="Arkusz1")
+df = pd.read_excel(r"resource/test.xlsx", sheet_name="Arkusz1")
 # print(df)
 
 df = df.astype(str)
