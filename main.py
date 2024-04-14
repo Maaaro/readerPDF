@@ -6,7 +6,7 @@ import pandas as pd
 # creating a list with a directions of .pdf
 # def listOfLinks():
 # try:
-sourceList = glob.glob("C:/Users/mrowk/Downloads/FAKTURY/*.pdf")
+sourceList = glob.glob("resource/invoice/*.pdf")
 print("Lista zrodel: ", sourceList)
 # except:
 #     print("Brak plików PDF w katalogu!")
