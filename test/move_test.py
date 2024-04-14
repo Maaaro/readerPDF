@@ -2,11 +2,11 @@
 #               ściezki do wszystkich folderów
 # todo wyjścia: folder wynikowy
 
+import os.path
+
 from pytest import raises
 
 from own.move import run_program
-
-import os.path
 
 def test_standard():
     run_program('input', 'output', [])
@@ -31,19 +31,6 @@ def test_copies_two_files_from_input():
     create_file("../resource/bankStatements/b.pdf", 'car2')
     run_program("../resource/bankStatements/", "../resource/tmp/", ['a.pdf', 'b.pdf'])
     assert read_file("../resource/tmp/b.pdf") == 'car2'
-
-# zastanów się, jaką rzecz nową chcesz dodać do programu
-# (np. kopiowanie plików)
-# napisz test pod to:
-#   - (test) stwórz pusty folder
-#   - (test) wsadź tam jakiś plik
-#   - (test) stwórz drugi pusty folder
-#   - (test) odpal program, podając oba foldery jako parametry
-#   - (test) move_file(): 'swoja logika'
-#   - (test) przejdź tylko wtedy jak w tym drugim katalogu jest plik o takiej
-#            nazwie i takiej treści
-# napisz implementację:
-#   - skopiuj plik, os.path.copy()
 
 def remove_if_exists(filename: str) -> None:
     if os.path.isfile(filename):
