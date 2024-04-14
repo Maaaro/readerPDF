@@ -1,7 +1,7 @@
 import glob
 
-import PyPDF2
 import pandas as pd
+from PyPDF2 import PdfReader
 
 invoice_filepaths = glob.glob("resource/invoice/*.pdf")
 print("Lista zrodel: ", invoice_filepaths)
@@ -14,10 +14,11 @@ list_of_id = df["NR faktury"].to_list()
 print(list_of_id)
 
 for filepath in invoice_filepaths:
-    reader = PyPDF2.PdfReader(filepath)
+    reader = PdfReader(filepath)
 
     print("\nLiczba stron: ", len(reader.pages), filepath)
-    textFromPDF = reader.pages[0].extract_text()
+    first_page = reader.pages[0]
+    textFromPDF = first_page.extract_text()
     for id in list_of_id:
         if id in textFromPDF:
             print("\n-------Tak znaleziono-------->  ", id)
