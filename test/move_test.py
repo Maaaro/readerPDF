@@ -32,6 +32,15 @@ def test_copies_two_files_from_input():
     run_program("../resource/bankStatements/", "../resource/tmp/", ['a.pdf', 'b.pdf'])
     assert read_file("../resource/tmp/b.pdf") == 'car2'
 
+def test_rename_filename_from_output_directory():
+    remove_if_exists("../resource/tmp/aaa.pdf")
+    remove_if_exists("../resource/tmp/a.pdf")
+    create_file("../resource/bankStatements/a.pdf",'car')
+    run_program("../resource/bankStatements/","../resource/tmp/",['a.pdf'])
+    rename_filename("../resource/tmp/","a.pdf","aaa.pdf")
+    assert read_file("../resource/tmp/aaa.pdf") == 'car'
+
+
 def remove_if_exists(filename: str) -> None:
     if os.path.isfile(filename):
         os.remove(filename)
@@ -45,3 +54,8 @@ def create_file(filename: str, body: str) -> None:
         os.mkdir(os.path.dirname(filename))
     with open(filename, mode='w') as file:
         file.write(body)
+
+def rename_filename(output_dir: str, filename: str,new_filename: str) -> None:
+    if os.path.isdir(os.path.dirname(output_dir + filename)):
+        os.rename(output_dir + filename, output_dir + new_filename)
+
