@@ -41,7 +41,6 @@ def test_rename_filename_from_output_directory():
     assert read_file("../resource/tmp/aaa.pdf") == 'car'
 
 
-
 def remove_if_exists(filename: str) -> None:
     if os.path.isfile(filename):
         os.remove(filename)

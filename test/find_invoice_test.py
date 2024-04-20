@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 import pytest
 
 from own.invoice import find_invoice
@@ -12,13 +15,19 @@ def test_pdf_file():
                                     "FV/2022/08/1253/3/11034")
     assert invoice_filename == "no file found"
 
+def empty_folder():
+    parent = tempfile.gettempdir()
+    if not os.path.exists(os.path.join(parent, "empty")):
+        os.makedirs(os.path.join(parent, "empty"))
+    return os.path.join(parent, "empty")
+
 def test_empty_folder():
-    invoice_filename = find_invoice("empty", "FV/2022/08/1253/3/11034")
+    invoice_filename = find_invoice(empty_folder(), "FV/2022/08/1253/3/11034")
     assert invoice_filename == "no file found"
 
 def test_empty_invoice_number():
     with pytest.raises(Exception) as e:
-        find_invoice("empty", "")
+        find_invoice(empty_folder(), "")
     assert str(e.value) == "empty invoice number"
 
 def test_malformed_pdf():
