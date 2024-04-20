@@ -39,3 +39,9 @@ def test_no_match():
     invoice_filename = find_invoice("no match for invoice number",
                                     "FV/007/00/0000/0/0004")
     assert invoice_filename == "no file found"
+
+def test_second_invoice():
+    invoice_filename = find_invoice("find second invoice",
+                                    "26908/BR/2023")
+
+    assert invoice_filename == "fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf"
