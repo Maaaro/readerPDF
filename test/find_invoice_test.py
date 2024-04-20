@@ -5,7 +5,6 @@ import pytest
 from PyPDF2 import PdfReader
 
 def find_invoice(invoices_folder: str, invoice_number: str) -> str:
-
     invoice_filepaths = glob.glob(invoices_folder + "/*.pdf")
     if len(invoice_number) == 0:
         raise Exception("empty invoice number")
@@ -13,11 +12,15 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> str:
         return "no file found"
 
     try:
-        PdfReader(invoice_filepaths[0])
+        reader = PdfReader(invoice_filepaths[0])
+        textFromPDF: str = reader.pages[0].extract_text()
+        if invoice_number in textFromPDF:
+            return os.path.basename(invoice_filepaths[0])
+        return "no file found"
     except:
         raise Exception("malformed pdf file")
 
-    return os.path.basename(invoice_filepaths[0])
+
 
 def test_one_invoice_one_file():
     invoice_filename = find_invoice("find_invoice_resources",
