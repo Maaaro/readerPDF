@@ -2,11 +2,9 @@ import tkinter
 from tkinter import *
 from tkinter import ttk, messagebox
 
-
-
-
-def move_files(message: str):
-    messagebox.showinfo(title="Test", message="WIP")
+def move_files(invoice_folder: str, output_dir: str, excelpath: str):
+    messagebox.showinfo(title="Test",
+                        message="Invoice folder: " + invoice_folder + "\n Output_dir: " + output_dir + "\n Excelpath: " + excelpath)
 
 def gui():
     root = Tk()
@@ -30,11 +28,11 @@ def gui():
     excelpath_entry = ttk.Entry(frame, width=40, textvariable=excelpath)
     excelpath_entry.grid(column=2, row=4)
 
-    message="WIP"
-    ttk.Button(frame, text="Przenieś", command=lambda: move_files(message)).grid(column=3, row=5)
+    message = "WIP"
+    ttk.Button(frame, text="Przenieś", command=lambda: move_files(invoices_folder.get(), output_dir.get(), excelpath.get())).grid(
+        column=3, row=5)
 
     ttk.Button(frame, text="Quit", command=root.destroy).grid(column=3, row=1)
     root.mainloop()
-
 
 gui()
