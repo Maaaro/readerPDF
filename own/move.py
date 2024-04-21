@@ -1,11 +1,11 @@
-def run_program(input_dir: str, output_dir: str, filenames: list[str]) -> None:
-    if len(input_dir) == 0:
+def run_program(invoices_folder: str, output_dir: str, filenames: list[str]) -> None:
+    if len(invoices_folder) == 0:
         raise Exception('Empty input directory')
     if len(output_dir) == 0:
         raise Exception('Empty output directory')
 
     for i, filename in enumerate(filenames):
-        with open(input_dir + filename) as file:
+        with open(invoices_folder + filename) as file:
             foo = file.read()
 
         create_file(output_dir + str(i + 1) + "_wb.pdf", foo)
