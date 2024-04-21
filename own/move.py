@@ -4,10 +4,11 @@ def run_program(input_dir: str, output_dir: str, filenames: list[str]) -> None:
     if len(output_dir) == 0:
         raise Exception('Empty output directory')
 
-    for filename in filenames:
+    for i, filename in enumerate(filenames):
         with open(input_dir + filename) as file:
             foo = file.read()
-        create_file(output_dir + filename, foo)
+
+        create_file(output_dir + str(i + 1) + "_wb.pdf", foo)
 
 def create_file(filepath: str, content: str) -> None:
     file = open(filepath, 'w')
