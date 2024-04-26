@@ -10,13 +10,13 @@ def test_empty_table():
 
 def test_empty_new_filename_column():
     new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "NoSerachColumn",
-                                   "Lp")
+                                 "Lp")
     assert new_filename == "column not found"
 
 def test_one_new_filename():
     new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "One", "Lp")
-    assert new_filename == ["1. " + "fv"]
+    assert new_filename == ["1. fv"]
 
 def test_two_new_filename():
     new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "Two", "Lp")
-    assert new_filename == ["1. " + "fv", "2. " + "fv"]
+    assert new_filename == ["1. fv", "2. fv"]

@@ -1,5 +1,4 @@
 import pandas as pd
-from numpy._core.multiarray import item
 
 def invoice_numbers(excelpath: str, sheetname: str, invoice_number_columnname: str):
     try:
