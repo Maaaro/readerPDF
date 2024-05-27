@@ -1,6 +1,6 @@
 # todo wejścia: folder z fakturami, folder z wyciągami, excel z wydatki,
 #               ściezki do wszystkich folderów
-# todo wyjścia: folder wynikowy
+# todo wyjścia: folder wynikowy, bla bla
 
 import os.path
 

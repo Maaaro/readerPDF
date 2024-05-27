@@ -11,7 +11,7 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
     #                     message="Invoice folder: " + invoice_folder + "\n Output_dir: " + output_dir + "\n Excelpath: " + excelpath)
 
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
-        messagebox.showinfo(title="KOMUNIKAT",
+        messagebox.showinfo(title="KOMUNIKAT bla bla bla",
                             message="Należy wypełnić wszystkie pola aby program działał poprawnie")
     else:
         try:
