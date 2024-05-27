@@ -74,7 +74,7 @@ def gui():
 
     document_type = StringVar()
     ttk.Radiobutton(frame, text="Szukaj faktur", variable=document_type, value="Invoice").grid(column=3, row=1)
-    ttk.Radiobutton(frame, text="Szukaj wyciągów bankowych", variable=document_type , value="WB").grid(column=4, row=1)
+    ttk.Radiobutton(frame, text="Szukaj wyciągów bankowych", variable=document_type, value="WB").grid(column=4, row=1)
 
     def selected_radiobutton():
         if document_type.get() == "Invoice" or document_type.get() == "WB":
