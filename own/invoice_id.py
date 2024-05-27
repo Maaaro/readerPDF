@@ -12,7 +12,7 @@ def invoice_numbers(excelpath: str, sheetname: str, invoice_number_columnname: s
     invoice_numbers = df[invoice_number_columnname].to_list()
     return invoice_numbers
 
-def new_filenames(excelpath: str, sheetname: str, new_filename_column: str):
+def new_filenames(excelpath: str, sheetname: str, new_filename_column: str, fileprefix: str):
     try:
         df = pd.read_excel(excelpath, sheet_name=sheetname)
         if df.empty:
@@ -23,6 +23,6 @@ def new_filenames(excelpath: str, sheetname: str, new_filename_column: str):
         return "file not found"
 
     new_filename = df[new_filename_column].to_list()
-    new_filename = [str(int(i)) + ". fv" for i in new_filename]
+    new_filename = [str(int(i)) + fileprefix for i in new_filename]
 
     return new_filename
