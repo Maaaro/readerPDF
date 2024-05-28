@@ -28,3 +28,15 @@ def new_filenames(excelpath: str, sheetname: str, new_filename_column: str, file
     new_filename = [str(int(i)) + fileprefix for i in new_filename]
 
     return new_filename
+
+
+def add_comment(excelpath: str, sheetname: str, status_invoice_list: list, fileprefix: str):
+    try:
+        df = pd.read_excel(excelpath, sheet_name=sheetname)
+        if df.empty:
+            return "data not found"
+    except:
+        return "file not found"
+    new_columnname = "Komentarz" + fileprefix
+    df.assign(**{new_columnname: status_invoice_list})
+    df.to_excel(excelpath)

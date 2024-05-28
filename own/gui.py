@@ -3,38 +3,44 @@ from pathlib import Path
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
 
-from own.invoice_id import invoice_numbers, new_filenames
+from own.invoice import find_invoice
+from own.invoice_id import invoice_numbers, new_filenames, add_comment
+from own.move import run_program
 
 
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
-    # messagebox.showinfo(title="Test",
-    #                     message="Invoice folder: " + invoice_folder + "\n Output_dir: " + output_dir + "\n Excelpath: " + excelpath)
-
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
         messagebox.showinfo(title="KOMUNIKAT bla bla bla",
                             message="Należy wypełnić wszystkie pola aby program działał poprawnie")
     else:
         try:
             list_of_invoices = invoice_numbers(
-                excelpath, "Sheet1",
+                excelpath, "0",
                 "Nr fv")
         except:
             messagebox.showinfo(title="KOMUNIKAT",
                                 message="Nie udało się pobrać listy fv")
 
         try:
-            list_of_newfilenames = new_filenames(
-                excelpath, "Sheet1", "Lp")
+            list_of_newfilenames = new_filenames(excelpath, "0", "Lp", fileprefix)
         except:
             messagebox.showinfo(title="KOMUNIKAT",
                                 message="Nie udało się pobrać listy z nazwami plików")
-
+        status_invoice_list = []
+        comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
+        index = 0
         for (invoice, newfilename) in zip(list_of_invoices, list_of_newfilenames):
-            return True
-            # find_invoice(invoice_folder, invoice)
-            # run_program(r"C:/Users/m.mrowka/OneDrive - Napollo Management sp. z o.o/Pulpit/Test/scripts/", r"C:/Users/m.mrowka/OneDrive - Napollo Management sp. z o.o/Pulpit/Test/Output", newfilename , " fv")
 
-    # invoice_numbers(invoice_folder, "Sheet1", invoice):
+            invoice_found = find_invoice(invoice_folder, str(invoice))
+            if invoice_found in comment_invoice_list:
+                status_invoice_list.insert(index, invoice_found)
+            else:
+                status_invoice_list.insert(index, "OK")
+                run_program(invoice_folder, output_dir, newfilename, fileprefix)
+            index = index + 1
+
+        add_comment(excelpath, "Sheet1", status_invoice_list, fileprefix)
+
 
 
 def gui():
@@ -102,7 +108,7 @@ def gui():
                 path = str(Path(folder_path_string))
                 set_path_into_field(option, path)
             else:
-                messagebox.showinfo(title="Uwaga", message="NIe wskazano ścieżki pliku")
+                messagebox.showinfo(title="Uwaga", message="Nie wskazano ścieżki pliku")
         else:
             messagebox.showinfo(title="Uwaga", message="error")
 
