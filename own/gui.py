@@ -1,5 +1,4 @@
 import tkinter
-from pathlib import Path
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
 
@@ -10,19 +9,18 @@ from own.move import run_program
 
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
-        messagebox.showinfo(title="KOMUNIKAT bla bla bla",
+        messagebox.showinfo(title="KOMUNIKAT",
                             message="Należy wypełnić wszystkie pola aby program działał poprawnie")
     else:
         try:
-            list_of_invoices = invoice_numbers(
-                excelpath, "0",
-                "Nr fv")
+            list_of_invoices = invoice_numbers(excelpath, "Sheet1",
+                                               "Nr fv")
         except:
             messagebox.showinfo(title="KOMUNIKAT",
                                 message="Nie udało się pobrać listy fv")
 
         try:
-            list_of_newfilenames = new_filenames(excelpath, "0", "Lp", fileprefix)
+            list_of_newfilenames = new_filenames(excelpath, "Sheet1", "Lp", fileprefix)
         except:
             messagebox.showinfo(title="KOMUNIKAT",
                                 message="Nie udało się pobrać listy z nazwami plików")
@@ -40,7 +38,8 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
             index = index + 1
 
         add_comment(excelpath, "Sheet1", status_invoice_list, fileprefix)
-
+        messagebox.showinfo(title="KOMUNIKAT",
+                            message="Przeniesiono")
 
 
 def gui():
@@ -98,14 +97,14 @@ def gui():
         if option == "Invoices" or option == "Output":
             folder_path_string = filedialog.askdirectory()
             if folder_path_string:
-                path = str(Path(folder_path_string))
+                path = str(folder_path_string)
                 set_path_into_field(option, path)
             else:
                 messagebox.showinfo(title="Uwaga", message="Nie wskazano ściezki folderu")
         elif option == "Excel":
             folder_path_string = filedialog.askopenfilename()
             if folder_path_string:
-                path = str(Path(folder_path_string))
+                path = str(folder_path_string)
                 set_path_into_field(option, path)
             else:
                 messagebox.showinfo(title="Uwaga", message="Nie wskazano ścieżki pliku")

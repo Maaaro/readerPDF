@@ -1,4 +1,4 @@
-import glob
+import fnmatch
 import os
 
 from PyPDF2 import PdfReader
@@ -26,4 +26,10 @@ def pdf_page_content(filepath: str):
 
 
 def pdf_files(folder: str) -> list[str]:
-    return glob.glob(folder + "/*.pdf")
+    list_of_pdf_files = []
+    for root, dirnames, filenames in os.walk(folder):
+        for filename in fnmatch.filter(filenames, "*.pdf"):
+            list_of_pdf_files.append(os.path.join(root, filename))
+
+    # return glob.glob(folder + "/**/*.pdf")
+    return list_of_pdf_files

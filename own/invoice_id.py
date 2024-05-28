@@ -3,7 +3,7 @@ import pandas as pd
 
 def invoice_numbers(excelpath: str, sheetname: str, invoice_number_columnname: str):
     try:
-        df = pd.read_excel(excelpath, sheet_name=sheetname)
+        df = pd.read_excel(excelpath, sheet_name=sheetname, engine="openpyxl")
         if df.empty:
             return "data not found"
         if invoice_number_columnname not in df.columns:
@@ -16,7 +16,7 @@ def invoice_numbers(excelpath: str, sheetname: str, invoice_number_columnname: s
 
 def new_filenames(excelpath: str, sheetname: str, new_filename_column: str, fileprefix: str):
     try:
-        df = pd.read_excel(excelpath, sheet_name=sheetname)
+        df = pd.read_excel(excelpath, sheet_name=sheetname, engine="openpyxl")
         if df.empty:
             return "data not found"
         if new_filename_column not in df.columns:
@@ -32,11 +32,10 @@ def new_filenames(excelpath: str, sheetname: str, new_filename_column: str, file
 
 def add_comment(excelpath: str, sheetname: str, status_invoice_list: list, fileprefix: str):
     try:
-        df = pd.read_excel(excelpath, sheet_name=sheetname)
+        df = pd.read_excel(excelpath, sheet_name=sheetname, engine="openpyxl")
         if df.empty:
             return "data not found"
     except:
         return "file not found"
-    new_columnname = "Komentarz" + fileprefix
-    df.assign(**{new_columnname: status_invoice_list})
+    df.assign(Komentarz=status_invoice_list)
     df.to_excel(excelpath)
