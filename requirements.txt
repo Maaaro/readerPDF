@@ -3,3 +3,6 @@ PyPDF2
 openpyxl
 tika
 pytest
+pycryptodome
+pikepdf
+#ironpdf or pypdftk #flatered pdf file

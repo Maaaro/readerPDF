@@ -1,5 +1,7 @@
 import fnmatch
 import os
+import pikepdf
+
 
 from PyPDF2 import PdfReader
 
@@ -19,17 +21,21 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> str:
 
 def pdf_page_content(filepath: str):
     try:
-        reader = PdfReader(filepath)
-        return reader.pages[0].extract_text()
+        # reader = PdfReader(filepath)
+        reader = pikepdf.Pdf.open(filepath)
+        return reader.pages
+
     except:
+
         raise Exception("malformed pdf file")
 
 
 def pdf_files(folder: str) -> list[str]:
     list_of_pdf_files = []
-    for root, dirnames, filenames in os.walk(folder):
+    for root, subFolders, filenames in os.walk(folder):
         for filename in fnmatch.filter(filenames, "*.pdf"):
-            list_of_pdf_files.append(os.path.join(root, filename))
+                list_of_pdf_files.append(os.path.join(root, filename))
+
 
     # return glob.glob(folder + "/**/*.pdf")
     return list_of_pdf_files

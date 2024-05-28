@@ -1,4 +1,5 @@
 import tkinter
+from pathlib import Path
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
 
@@ -97,14 +98,14 @@ def gui():
         if option == "Invoices" or option == "Output":
             folder_path_string = filedialog.askdirectory()
             if folder_path_string:
-                path = str(folder_path_string)
+                path = str(Path(folder_path_string))
                 set_path_into_field(option, path)
             else:
                 messagebox.showinfo(title="Uwaga", message="Nie wskazano ściezki folderu")
         elif option == "Excel":
             folder_path_string = filedialog.askopenfilename()
             if folder_path_string:
-                path = str(folder_path_string)
+                path = str(Path(folder_path_string))
                 set_path_into_field(option, path)
             else:
                 messagebox.showinfo(title="Uwaga", message="Nie wskazano ścieżki pliku")
