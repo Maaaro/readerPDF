@@ -5,4 +5,9 @@ tika
 pytest
 pycryptodome
 pikepdf
+python-docx
+docx2pdf
+mammoth
+pdfkit
+wkhtmltopdf
 #ironpdf or pypdftk #flatered pdf file

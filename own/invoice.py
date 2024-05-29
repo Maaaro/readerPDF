@@ -2,7 +2,6 @@ import fnmatch
 import os
 
 import PyPDF2
-import pikepdf
 
 
 def find_invoice(invoices_folder: str, invoice_number: str) -> str:
@@ -13,20 +12,29 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> str:
         return "no file found"
 
     for filepath in filepaths:
+        # convert_pdf_file(filepath)
         if invoice_number in pdf_page_content(filepath):
             return os.path.basename(filepath)
     return "no file found"
 
 
-def pdf_page_content(filepath: str):
+def pdf_page_content(filepath: str, page=0):
+    # if page is None:
+    #     args = ["pdftotext", "-layout", "-q", filepath, "-"]
+    # else:
+    #     args = ["pdftotext", "-f", str(page), "-l", str(page), "-layout"]
     try:
-        reader = PdfReader(filepath)
-        reader = pikepdf.Pdf.open(filepath)
-        # pdffile = open(filepath, "rb")
-        # reader = PyPDF2.PdfFileReader(pdffile)
-        # pdfcontent = reader.getPage(0)
-        return reader
+        with open(filepath, "rb") as f:
+            reader = PyPDF2.PdfReader(f)
+            if reader.is_encrypted:
+                reader.decrypt("")
+            page = reader.pages[page]
+            return page.extract_text()
+    #     reader = PyPDF2.PdfReader(filepath)
+    #     return reader.pages[0].extract_text()
 
+    # txt = subprocess.check_output(args, universal_newlines=True)
+    # return txt.splitlines()
 
     except:
         raise Exception("malformed pdf file")
