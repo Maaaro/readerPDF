@@ -14,9 +14,9 @@ def test_empty_new_filename_column():
     assert new_filename == "column not found"
 
 def test_one_new_filename():
-    new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "One", "Lp", ". fv")
-    assert new_filename == ["1. fv"]
+    new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "One", "Lp", "_fv.pdf")
+    assert new_filename == ["1_fv.pdf"]
 
 def test_two_new_filename():
-    new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "Two", "Lp", ". fv")
-    assert new_filename == ["1. fv", "2. fv"]
+    new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "Two", "Lp", "_fv.pdf")
+    assert new_filename == ["1_fv.pdf", "2_fv.pdf"]

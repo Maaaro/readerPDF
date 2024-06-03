@@ -23,15 +23,20 @@ def pdf_page_content(filepath: str, page=0):
     #     args = ["pdftotext", "-layout", "-q", filepath, "-"]
     # else:
     #     args = ["pdftotext", "-f", str(page), "-l", str(page), "-layout"]
+
     try:
-        with open(filepath, "rb") as f:
-            reader = PyPDF2.PdfReader(f)
-            if reader.is_encrypted:
-                reader.decrypt("")
-            page = reader.pages[page]
-            return page.extract_text()
-    #     reader = PyPDF2.PdfReader(filepath)
-    #     return reader.pages[0].extract_text()
+        # pdfcontent = StringIO(filepath).encoding("ascii", "ignore")
+        # pdfcontent = textract.process(filepath, method="pdfminer")
+        # return pdfcontent
+
+        #     with open(filepath, "rb") as f:
+        #         reader = PyPDF2.PdfReader(f)
+        #         if reader.is_encrypted:
+        #             reader.decrypt("")
+        #         page = reader.pages[page]
+        #         return page.extract_text()
+        reader = PyPDF2.PdfReader(open(filepath, 'rb'), strict=False)
+        return reader.pages[0].extract_text()
 
     # txt = subprocess.check_output(args, universal_newlines=True)
     # return txt.splitlines()
@@ -44,6 +49,6 @@ def pdf_files(folder: str) -> list[str]:
     list_of_pdf_files = []
     for root, subFolders, filenames in os.walk(folder):
         for filename in fnmatch.filter(filenames, "*.pdf"):
-            list_of_pdf_files.append(os.path.join(root, filename))
+            list_of_pdf_files.append(os.path.join(root + os.sep, filename).replace("\\", "/"))
 
     return list_of_pdf_files

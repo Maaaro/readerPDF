@@ -37,5 +37,5 @@ def add_comment(excelpath: str, sheetname: str, status_invoice_list: list, filep
             return "data not found"
     except:
         return "file not found"
-    df.assign(Komentarz=status_invoice_list)
+    df = df.assign(Komentarz=status_invoice_list)
     df.to_excel(excelpath)

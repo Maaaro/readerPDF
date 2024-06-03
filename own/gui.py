@@ -1,5 +1,4 @@
 import tkinter
-from pathlib import Path
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
 
@@ -28,14 +27,32 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         status_invoice_list = []
         comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
         index = 0
+
+        popup = tkinter.Toplevel()
+        popup.title("Progress bar")
+        progress = 0
+        ttk.Label(popup, text="Wyszukiwanie").grid(row=0, column=0)
+        progress_var = tkinter.DoubleVar()
+        progress_bar = ttk.Progressbar(popup, variable=progress_var, maximum=len(list_of_invoices))
+        progress_bar.grid(row=1, column=0)
+        popup.pack_slaves()
+        progress_step = float(1)
+
         for (invoice, newfilename) in zip(list_of_invoices, list_of_newfilenames):
 
             invoice_found = find_invoice(invoice_folder, str(invoice))
+
             if invoice_found in comment_invoice_list:
                 status_invoice_list.insert(index, invoice_found)
             else:
                 status_invoice_list.insert(index, "OK")
-                run_program(invoice_folder, output_dir, newfilename, fileprefix)
+
+                run_program(invoice_folder, invoice_found, output_dir, newfilename, fileprefix)
+
+            popup.update()
+            progress += progress_step
+            progress_var.set(progress)
+
             index = index + 1
 
         add_comment(excelpath, "Sheet1", status_invoice_list, fileprefix)
@@ -85,9 +102,9 @@ def gui():
     def selected_radiobutton():
         if document_type.get() == "Invoice" or document_type.get() == "WB":
             if document_type.get() == "Invoice":
-                fileprefix = ". fv"
+                fileprefix = "_fv.pdf"
             elif document_type.get() == "WB":
-                fileprefix = ". wb"
+                fileprefix = "_wb.pdf"
             move_files(invoices_folder.get(), output_dir.get(), excelpath.get(), fileprefix)
         else:
             messagebox.showinfo(title="Uwaga", message="Wybierz 'Szukaj faktur' lub 'wyciągów bankowych'")
