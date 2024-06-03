@@ -1,19 +1,19 @@
 import codecs
 
 
-def run_program(invoices_folder: str, invoice_found: str, output_dir: str, filenames: list[str],
+def run_program(invoices_folder: str, invoice_found: str, output_dir: str, filenames: str,
                 fileprefix: str) -> None:
     if len(invoices_folder) == 0:
         raise Exception('Empty input directory')
     if len(output_dir) == 0:
         raise Exception('Empty output directory')
 
-    for i, filename in enumerate(filenames):
-        # with open(invoices_folder+"/"+invoice_found, encoding="utf8") as file:
+        # for i, filename in enumerate(filenames):
+        #     # with open(invoices_folder+"/"+invoice_found, encoding="utf8") as file:
         with codecs.open(invoices_folder + "/" + invoice_found, encoding="latin-1") as file:
             foo = file.read()
 
-        create_file(output_dir + str(filename) + fileprefix, foo)
+        create_file(output_dir + str(filenames) + fileprefix, foo)
         file.close()
 
 

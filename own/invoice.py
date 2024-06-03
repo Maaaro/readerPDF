@@ -19,27 +19,9 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> str:
 
 
 def pdf_page_content(filepath: str, page=0):
-    # if page is None:
-    #     args = ["pdftotext", "-layout", "-q", filepath, "-"]
-    # else:
-    #     args = ["pdftotext", "-f", str(page), "-l", str(page), "-layout"]
-
     try:
-        # pdfcontent = StringIO(filepath).encoding("ascii", "ignore")
-        # pdfcontent = textract.process(filepath, method="pdfminer")
-        # return pdfcontent
-
-        #     with open(filepath, "rb") as f:
-        #         reader = PyPDF2.PdfReader(f)
-        #         if reader.is_encrypted:
-        #             reader.decrypt("")
-        #         page = reader.pages[page]
-        #         return page.extract_text()
         reader = PyPDF2.PdfReader(open(filepath, 'rb'), strict=False)
         return reader.pages[0].extract_text()
-
-    # txt = subprocess.check_output(args, universal_newlines=True)
-    # return txt.splitlines()
 
     except:
         raise Exception("malformed pdf file")
