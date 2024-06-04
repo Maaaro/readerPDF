@@ -26,9 +26,9 @@ def test_validate_non_empty_output_directory():
 
 
 def test_copies_file_from_input_directory():
-    create_file("../resource/bankStatements/a.txt", 'car')
-    run_program("../resource/bankStatements/", 'a.txt', "../resource/tmp/", '1', '_wb.txt')
-    assert read_file("../resource/tmp/1_wb.txt") == 'car'
+    create_file("../resource/bankStatements/e.txt", 'car3')
+    run_program("../resource/bankStatements/", 'e.txt', "../resource/tmp/", '5', '_wb.txt')
+    assert read_file("../resource/tmp/5_wb.txt") == 'car3'
 
 
 def test_copies_two_files_from_input():

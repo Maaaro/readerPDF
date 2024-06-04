@@ -40,5 +40,5 @@ def add_comment(excelpath: str, sheetname: str, status_invoice_list: list, filep
     except:
         return "file not found"
     df = df.sort_values("Lp", ascending=True)
-    df = df.assign(Komentarz=status_invoice_list)
+    df = df.assign(**{"Komentardz do " + fileprefix: status_invoice_list})
     df.to_excel(excelpath)

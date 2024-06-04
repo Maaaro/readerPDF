@@ -11,7 +11,7 @@ def run_program(invoices_folder: str, invoice_found: str, output_dir: str, filen
     # for i, filename in enumerate(filenames):
     with codecs.open(invoices_folder + "/" + invoice_found, encoding="latin-1") as file:
         foo = file.read()
-        create_file(output_dir + str(filenames) + fileprefix, foo)
+        create_file(output_dir + str(filenames), foo)
         file.close()
 
 
