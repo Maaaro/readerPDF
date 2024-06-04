@@ -40,5 +40,18 @@ def add_comment(excelpath: str, sheetname: str, status_invoice_list: list, filep
     except:
         return "file not found"
     df = df.sort_values("Lp", ascending=True)
-    df = df.assign(**{"Komentardz do " + fileprefix: status_invoice_list})
-    df.to_excel(excelpath)
+    df = df.assign(**{"Komentarz do " + fileprefix: status_invoice_list})
+    with pd.ExcelWriter(excelpath, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
+        df.to_excel(writer, sheet_name=sheetname, index=False)
+    return list(df)
+
+
+def remove_comment(excelpath, sheetname, columnname):
+    try:
+        df = pd.read_excel(excelpath, sheet_name=sheetname, engine="openpyxl")
+        df = df.drop(columns=[columnname])
+        if df.empty:
+            return "data not found"
+    except:
+        return "file not found"
+
