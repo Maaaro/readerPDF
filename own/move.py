@@ -8,11 +8,9 @@ def run_program(invoices_folder: str, invoice_found: str, output_dir: str, filen
     if len(output_dir) == 0:
         raise Exception('Empty output directory')
 
-        # for i, filename in enumerate(filenames):
-        #     # with open(invoices_folder+"/"+invoice_found, encoding="utf8") as file:
-        with codecs.open(invoices_folder + "/" + invoice_found, encoding="latin-1") as file:
-            foo = file.read()
-
+    # for i, filename in enumerate(filenames):
+    with codecs.open(invoices_folder + "/" + invoice_found, encoding="latin-1") as file:
+        foo = file.read()
         create_file(output_dir + str(filenames) + fileprefix, foo)
         file.close()
 
