@@ -55,3 +55,16 @@ def remove_comment(excelpath, sheetname, columnname):
     except:
         return "file not found"
 
+def list_of_WF_case(excelpath: str, sheetname: str, wf_number_columnname: str):
+    try:
+        df = pd.read_excel(excelpath, sheet_name=sheetname, engine="openpyxl")
+        if df.empty:
+            return "data not found"
+        if wf_number_columnname not in df.columns:
+            return "column not found"
+    except:
+        return "file not found"
+    df = df.sort_values(["Lp"], ascending=True)
+    wf_cases = df[wf_number_columnname].to_list()
+    # wf_cases = wf_cases.replace("nan", "")
+    return wf_cases

@@ -1,5 +1,6 @@
 import fnmatch
 import os
+from typing import List, Any
 
 import PyPDF2
 
@@ -10,12 +11,15 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> str:
         raise Exception("empty invoice number")
     if len(filepaths) == 0:
         return "no file found"
-
+    list_pdf_files = []
     for filepath in filepaths:
         # convert_pdf_file(filepath)
         if invoice_number in pdf_page_content(filepath):
-            return os.path.basename(filepath)
-    return "no file found"
+            list_pdf_files = os.path.basename(filepath)
+    if list_pdf_files == []:
+        return "no file found"
+    else:
+        return list_pdf_files
 
 
 def pdf_page_content(filepath: str, page=0):

@@ -18,3 +18,4 @@ def create_file(filepath: str, content: str) -> None:
     with codecs.open(filepath, encoding="latin-1", mode="w+") as file:
         file.write(content)
         file.close()
+

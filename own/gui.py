@@ -1,9 +1,10 @@
+import os
 import tkinter
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
 
 from own.invoice import find_invoice
-from own.invoice_id import invoice_numbers, new_filenames, add_comment
+from own.invoice_id import invoice_numbers, new_filenames, add_comment, list_of_WF_case
 from own.move import run_program
 
 
@@ -24,7 +25,13 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         except:
             messagebox.showinfo(title="KOMUNIKAT",
                                 message="Nie udało się pobrać listy z nazwami plików")
-        status_invoice_list = []
+
+        try:
+            wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
+        except:
+            messagebox.showinfo(title="KOMUNIKAT",
+                                message="Nie udało się pobrać listy z nazwami spraw w WF")
+
         comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
         index = 0
 
@@ -37,16 +44,20 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         progress_bar.grid(row=1, column=0)
         popup.pack_slaves()
         progress_step = int(1)
+        status_invoice_list = []
+        for (invoice, newfilename, wf_number) in zip(list_of_invoices, list_of_newfilenames, wf_cases):
 
-        for (invoice, newfilename) in zip(list_of_invoices, list_of_newfilenames):
-
-            invoice_found = find_invoice(invoice_folder, str(invoice))
-
-            if invoice_found in comment_invoice_list:
-                status_invoice_list.insert(index, invoice_found)
+            if fileprefix == "_fv.pdf":
+                newpath = invoice_folder + '/' + str(wf_number)
+                invoice_found = find_invoice(newpath, str(invoice))
             else:
-                status_invoice_list.insert(index, "OK")
-                run_program(invoice_folder, invoice_found, output_dir, newfilename)
+                invoice_found = find_invoice(invoice_folder, str(invoice))
+            for match in invoice_found:
+                if match in comment_invoice_list:
+                    status_invoice_list.insert(index, match)
+                else:
+                    status_invoice_list.insert(index, "OK")
+                    run_program(invoice_folder, match, output_dir, newfilename)
 
             popup.update()
             progress += progress_step
