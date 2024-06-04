@@ -46,7 +46,7 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                 status_invoice_list.insert(index, invoice_found)
             else:
                 status_invoice_list.insert(index, "OK")
-                run_program(invoice_folder, invoice_found, output_dir, newfilename, fileprefix)
+                run_program(invoice_folder, invoice_found, output_dir, newfilename)
 
             popup.update()
             progress += progress_step
