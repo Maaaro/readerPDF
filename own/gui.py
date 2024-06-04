@@ -102,10 +102,10 @@ def gui():
     def selected_radiobutton():
         if document_type.get() == "Invoice" or document_type.get() == "WB":
             if document_type.get() == "Invoice":
-                fileprefix = "_fv.pdf"
+                move_files(invoices_folder.get(), output_dir.get() + "/", excelpath.get(), "_fv.pdf")
+
             elif document_type.get() == "WB":
-                fileprefix = "_wb.pdf"
-            move_files(invoices_folder.get(), output_dir.get() + "/", excelpath.get(), fileprefix)
+                move_files(invoices_folder.get(), output_dir.get() + "/", excelpath.get(), "_wb.pdf")
         else:
             messagebox.showinfo(title="Uwaga", message="Wybierz 'Szukaj faktur' lub 'wyciągów bankowych'")
 
