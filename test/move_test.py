@@ -1,11 +1,9 @@
-# todo wejścia: folder z fakturami, folder z wyciągami, excel z wydatki,
-#               ściezki do wszystkich folderów
-# todo wyjścia: folder wynikowy, bla bla
-
 import os.path
 
 from pytest import raises
 
+from own.invoice import pdf_files
+from own.invoice_id import new_filenames
 from own.move import run_program
 
 
@@ -53,6 +51,16 @@ def test_move_two_file_with_bank_statement_ordinal_number():
     run_program("../resource/bankStatements/", 'd.txt', "../resource/tmp/", '4_wb.txt')
 
     assert read_file("../resource/tmp/4_wb.txt") == 'red'
+
+
+def test_two_files_with_the_same_invoice_number():
+    invoicefound = ["fv_pl_1_1bf5a3c1809c7fe44bd2e78915c3.pdf", "fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf"]
+    # "26908/BR/2023"
+    new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "TheSame", "Lp", "_fv.pdf")
+    run_program("test/two_file_with_the_same_invoice_number", invoicefound[1], "../resource/tmp/", new_filename)
+
+    output = pdf_files("../resource/tmp/")
+    assert output == ["aa_fv.pdf", "aa1_fv.pdf"]
 
 
 def remove_if_exists(filename: str) -> None:

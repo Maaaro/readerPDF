@@ -48,16 +48,31 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         for (invoice, newfilename, wf_number) in zip(list_of_invoices, list_of_newfilenames, wf_cases):
 
             if fileprefix == "_fv.pdf":
-                newpath = invoice_folder + '/' + str(wf_number)
-                invoice_found = find_invoice(newpath, str(invoice))
+                # newpath = invoice_folder + '/' + str(wf_number)
+                invoice_found = find_invoice(invoice_folder, str(invoice))
             else:
                 invoice_found = find_invoice(invoice_folder, str(invoice))
-            for match in invoice_found:
+            items_invoice_found = len(invoice_found)
+            if items_invoice_found == 0 or 'no file found' in invoice_found:
+                continue
+            elif items_invoice_found == 1:
                 if match in comment_invoice_list:
                     status_invoice_list.insert(index, match)
                 else:
                     status_invoice_list.insert(index, "OK")
                     run_program(invoice_folder, match, output_dir, newfilename)
+            else:
+                for i, match in enumerate(invoice_found):
+                    if match in comment_invoice_list:
+                        status_invoice_list.insert(index, match)
+                    else:
+
+                        if i == 0:
+                            status_invoice_list.insert(index, "OK")
+                            run_program(invoice_folder, match, output_dir, newfilename)
+                        else:
+                            newfilename = newfilename.replace('.pdf', str(i) + '.pdf')
+                            run_program(invoice_folder, match, output_dir, newfilename)
 
             popup.update()
             progress += progress_step
