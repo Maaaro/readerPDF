@@ -3,16 +3,15 @@ import os
 
 import fitz
 
-
 def find_invoice(invoices_folder: str, invoice_number: str) -> list[str]:
     filepaths: list[str] = pdf_files(invoices_folder)
     if len(invoice_number) == 0:
         raise Exception("empty invoice number")
     if len(filepaths) == 0:
-        return ["no file found"]
+        return []
     list_pdf_files = []
     lista_komentarzy = []
-    lista_sciezek =[]
+    lista_sciezek = []
     for filepath in filepaths:
         list_pdf_files = []
         komentarz = []
@@ -28,15 +27,12 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> list[str]:
             lista_sciezek.append(list_pdf_files)
             lista_komentarzy.append(komentarz)
     # print("suma wyników " + str(lista_sciezek))
-    total=[]
+    total = []
     for list, koment in zip(lista_sciezek, lista_komentarzy):
-        for number,ko in zip(list,koment):
+        for number, ko in zip(list, koment):
             if 'ok' in ko:
                 total.append(number)
     return total
-
-
-
 
     # list_pdf_files = []
     # suma_komentarzy = []
@@ -82,7 +78,6 @@ def pdf_page_content(filepath: str) -> str:
     except:
         # raise Exception("malformed pdf file")
         return "malformed pdf file"
-
 
 def pdf_files(folder: str) -> list[str]:
     list_of_pdf_files = []
