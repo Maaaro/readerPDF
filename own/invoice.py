@@ -3,6 +3,11 @@ import os
 from typing import List, Any
 
 import PyPDF2
+import typing
+from borb.pdf.document.document import Document
+from borb.pdf import Document
+from borb.pdf.pdf import PDF
+from borb.toolkit.text.simple_text_extraction import SimpleTextExtraction
 
 
 def find_invoice(invoices_folder: str, invoice_number: str) -> list[str]:
@@ -24,17 +29,30 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> list[str]:
 
 def pdf_page_content(filepath: str):
     try:
-        reader = PyPDF2.PdfReader(open(filepath, 'rb'), strict=False)
-        return reader.pages[0].extract_text()
+        # # reader = PyPDF2.PdfReader(open(filepath, 'rb'), strict=False)
+        # return reader.pages[0].extract_text()
+        # read the Document
+        doc: typing.Optional[Document] = None
+        l: SimpleTextExtraction = SimpleTextExtraction()
+        with open(filepath, "rb") as in_file_handle:
+            doc = PDF.loads(in_file_handle, event_listeners=[l])
+
+        # check whether we have read a Document
+        assert doc is not None
+
+        # print the text on the first Page
+        return l.get_text()[0]
 
     except:
-        raise Exception("malformed pdf file")
+        # raise Exception("malformed pdf file")
+        return "malformed pdf file"
 
 
 def pdf_files(folder: str) -> list[str]:
     list_of_pdf_files = []
     for root, subFolders, filenames in os.walk(folder):
         for filename in fnmatch.filter(filenames, "*.pdf"):
-            list_of_pdf_files.append(os.path.join(root + os.sep, filename).replace("\\", "/"))
+            path = os.path.join(root + os.sep, filename).replace("\\", "/")
+            list_of_pdf_files.append(path)
 
     return list_of_pdf_files

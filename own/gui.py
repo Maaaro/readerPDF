@@ -27,7 +27,8 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                                 message="Nie udało się pobrać listy z nazwami plików")
 
         try:
-            wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
+            wf_cases_with_nan= list_of_WF_case(excelpath, "Sheet1", "WF")
+            wf_cases = [x for x in wf_cases_with_nan if x==x]
         except:
             messagebox.showinfo(title="KOMUNIKAT",
                                 message="Nie udało się pobrać listy z nazwami spraw w WF")
@@ -48,19 +49,20 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         for (invoice, newfilename, wf_number) in zip(list_of_invoices, list_of_newfilenames, wf_cases):
 
             if fileprefix == "_fv.pdf":
-                # newpath = invoice_folder + '/' + str(wf_number)
-                invoice_found = find_invoice(invoice_folder, str(invoice))
+                newpath = invoice_folder + '/' + str(wf_number) +'/'
+                invoice_found = find_invoice(newpath, str(invoice))
             else:
                 invoice_found = find_invoice(invoice_folder, str(invoice))
             items_invoice_found = len(invoice_found)
             if items_invoice_found == 0 or 'no file found' in invoice_found:
+                status_invoice_list.insert(index, "no file found")
                 continue
-            elif items_invoice_found == 1:
-                if match in comment_invoice_list:
-                    status_invoice_list.insert(index, match)
-                else:
-                    status_invoice_list.insert(index, "OK")
-                    run_program(invoice_folder, match, output_dir, newfilename)
+            # elif items_invoice_found == 1:
+            #     if match in comment_invoice_list:
+            #         status_invoice_list.insert(index, match)
+            #     else:
+            #         status_invoice_list.insert(index, "OK")
+            #         run_program(invoice_folder, match, output_dir, newfilename)
             else:
                 for i, match in enumerate(invoice_found):
                     if match in comment_invoice_list:
