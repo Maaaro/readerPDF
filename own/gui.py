@@ -27,8 +27,8 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                                 message="Nie udało się pobrać listy z nazwami plików")
 
         try:
-            wf_cases_with_nan= list_of_WF_case(excelpath, "Sheet1", "WF")
-            wf_cases = [x for x in wf_cases_with_nan if x==x]
+            wf_cases= list_of_WF_case(excelpath, "Sheet1", "WF")
+            # wf_cases = [x for x in wf_cases_with_nan if x==x]
         except:
             messagebox.showinfo(title="KOMUNIKAT",
                                 message="Nie udało się pobrać listy z nazwami spraw w WF")
@@ -49,13 +49,17 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         for (invoice, newfilename, wf_number) in zip(list_of_invoices, list_of_newfilenames, wf_cases):
 
             if fileprefix == "_fv.pdf":
-                newpath = invoice_folder + '/' + str(wf_number) +'/'
+                if wf_number == "empty":
+                    status_invoice_list.append("no WF number")
+                    continue
+                else:
+                    newpath = invoice_folder + '/' + str(wf_number) + '/'
                 invoice_found = find_invoice(newpath, str(invoice))
             else:
                 invoice_found = find_invoice(invoice_folder, str(invoice))
             items_invoice_found = len(invoice_found)
             if items_invoice_found == 0 or 'no file found' in invoice_found:
-                status_invoice_list.insert(index, "no file found")
+                status_invoice_list.append("no file found")
                 continue
             # elif items_invoice_found == 1:
             #     if match in comment_invoice_list:
@@ -64,18 +68,19 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
             #         status_invoice_list.insert(index, "OK")
             #         run_program(invoice_folder, match, output_dir, newfilename)
             else:
+                status_multiple_invoice_list = []
                 for i, match in enumerate(invoice_found):
                     if match in comment_invoice_list:
-                        status_invoice_list.insert(index, match)
+                        status_multiple_invoice_list.append(match)
                     else:
 
                         if i == 0:
-                            status_invoice_list.insert(index, "OK")
+                            status_multiple_invoice_list.append("OK")
                             run_program(invoice_folder, match, output_dir, newfilename)
                         else:
                             newfilename = newfilename.replace('.pdf', str(i) + '.pdf')
                             run_program(invoice_folder, match, output_dir, newfilename)
-
+                status_invoice_list.append(status_multiple_invoice_list)
             popup.update()
             progress += progress_step
             progress_var.set(progress)

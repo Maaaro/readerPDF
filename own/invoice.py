@@ -1,13 +1,7 @@
 import fnmatch
 import os
-from typing import List, Any
 
-import PyPDF2
-import typing
-from borb.pdf.document.document import Document
-from borb.pdf import Document
-from borb.pdf.pdf import PDF
-from borb.toolkit.text.simple_text_extraction import SimpleTextExtraction
+import fitz
 
 
 def find_invoice(invoices_folder: str, invoice_number: str) -> list[str]:
@@ -17,32 +11,74 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> list[str]:
     if len(filepaths) == 0:
         return ["no file found"]
     list_pdf_files = []
+    lista_komentarzy = []
+    lista_sciezek =[]
     for filepath in filepaths:
-        # convert_pdf_file(filepath)
-        if invoice_number in pdf_page_content(filepath):
-            list_pdf_files.append(filepath)
-    if list_pdf_files == []:
-        return ["no file found"]
-    else:
-        return list_pdf_files
+        list_pdf_files = []
+        komentarz = []
+        with fitz.open(filepath) as pdf_file:
+            file_content = ""
+
+            for page in pdf_file:
+                file_content += page.get_text().strip()
+            if invoice_number in file_content:
+                list_pdf_files.append(filepath)
+                komentarz.append("ok")
+            # print(list_pdf_files)
+            lista_sciezek.append(list_pdf_files)
+            lista_komentarzy.append(komentarz)
+    # print("suma wyników " + str(lista_sciezek))
+    total=[]
+    for list, koment in zip(lista_sciezek, lista_komentarzy):
+        for number,ko in zip(list,koment):
+            if 'ok' in ko:
+                total.append(number)
+    return total
 
 
-def pdf_page_content(filepath: str):
+
+
+    # list_pdf_files = []
+    # suma_komentarzy = []
+    # poprawne_sciezki = []
+    # filepath_list = []
+    # for filepath in filepaths:
+    #     # convert_pdf_file(filepath)
+    #     file_content = pdf_page_content(filepath)
+    #     if invoice_number in file_content:
+    #         list_pdf_files.append(filepath)
+    #         filepath_list.append("found")
+    #     else:
+    #         if file_content == 'malformed pdf file':
+    #             list_pdf_files.append('malformed pdf file')
+    #         else:
+    #             list_pdf_files.append('no file found')
+    # suma_komentarzy.append(list_pdf_files)
+    # poprawne_sciezki.append(filepath_list)
+    # # if list_pdf_files == []:
+    # #     return ["no file found"]
+    # # else:
+    # #     return list_pdf_files
+    # found_files = []
+    # ffiles = []
+    # for (komentarz, sciezka) in zip(suma_komentarzy, poprawne_sciezki):
+    #     for (number, link) in zip(komentarz, sciezka):
+    #         if "found" in number:
+    #             ffiles.append(link)
+    # if len(ffiles) == 0:
+    #     return ['no file found']
+    # else:
+    #     return found_files.insert(0,link)
+
+def pdf_page_content(filepath: str) -> str:
     try:
-        # # reader = PyPDF2.PdfReader(open(filepath, 'rb'), strict=False)
-        # return reader.pages[0].extract_text()
-        # read the Document
-        doc: typing.Optional[Document] = None
-        l: SimpleTextExtraction = SimpleTextExtraction()
-        with open(filepath, "rb") as in_file_handle:
-            doc = PDF.loads(in_file_handle, event_listeners=[l])
+        with fitz.open(filepath, 'rb') as pdf_file:
+            page_content = ""
 
-        # check whether we have read a Document
-        assert doc is not None
+            for page in pdf_file:
+                page_content += page.get_text().strip()
 
-        # print the text on the first Page
-        return l.get_text()[0]
-
+            return page_content
     except:
         # raise Exception("malformed pdf file")
         return "malformed pdf file"
