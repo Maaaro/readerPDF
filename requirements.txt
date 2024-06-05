@@ -10,4 +10,5 @@ docx2pdf
 mammoth
 pdfkit
 wkhtmltopdf
+pymupdf
 #ironpdf or pypdftk #flatered pdf file
