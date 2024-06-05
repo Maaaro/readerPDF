@@ -7,7 +7,6 @@ from own.invoice import find_invoice
 from own.invoice_id import invoice_numbers, new_filenames, add_comment, list_of_WF_case
 from own.move import run_program
 
-
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
         messagebox.showinfo(title="KOMUNIKAT",
@@ -27,7 +26,7 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                                 message="Nie udało się pobrać listy z nazwami plików")
 
         try:
-            wf_cases= list_of_WF_case(excelpath, "Sheet1", "WF")
+            wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
             # wf_cases = [x for x in wf_cases_with_nan if x==x]
         except:
             messagebox.showinfo(title="KOMUNIKAT",
@@ -61,12 +60,6 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
             if items_invoice_found == 0 or 'no file found' in invoice_found:
                 status_invoice_list.append("no file found")
                 continue
-            # elif items_invoice_found == 1:
-            #     if match in comment_invoice_list:
-            #         status_invoice_list.insert(index, match)
-            #     else:
-            #         status_invoice_list.insert(index, "OK")
-            #         run_program(invoice_folder, match, output_dir, newfilename)
             else:
                 status_multiple_invoice_list = []
                 for i, match in enumerate(invoice_found):
@@ -91,7 +84,6 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         popup.destroy()
         messagebox.showinfo(title="KOMUNIKAT",
                             message="Przeniesiono")
-
 
 def gui():
     root = Tk()
@@ -180,6 +172,5 @@ def gui():
             excelpath_entry.config(state="disable")
 
     root.mainloop()
-
 
 gui()
