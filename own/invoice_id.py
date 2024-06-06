@@ -1,4 +1,5 @@
 import pandas as pd
+from own.move import create_file
 
 def invoice_numbers(excelpath: str, sheetname: str, invoice_number_columnname: str):
     try:
@@ -10,7 +11,9 @@ def invoice_numbers(excelpath: str, sheetname: str, invoice_number_columnname: s
     except:
         return "file not found"
     df = df.sort_values(["Lp"], ascending=True)
-    return df[invoice_number_columnname].to_list()
+    invoice_numbers = df[invoice_number_columnname].to_list()
+    return invoice_numbers
+
 
 def new_filenames(excelpath: str, sheetname: str, new_filename_column: str, fileprefix: str):
     try:
@@ -35,6 +38,7 @@ def add_comment(excelpath: str, sheetname: str, status_invoice_list: list, filep
             return "data not found"
     except:
         return "file not found"
+    create_file("C:/Users/m.mrowka/PycharmProjects/readerPDF/resource/tmp/temporary_page_content.txt", str(status_invoice_list))
     df = df.sort_values("Lp", ascending=True)
     df = df.assign(**{"Komentarz do " + fileprefix: status_invoice_list})
     with pd.ExcelWriter(excelpath, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:

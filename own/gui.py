@@ -7,6 +7,7 @@ from own.invoice import find_invoice
 from own.invoice_id import invoice_numbers, new_filenames, add_comment, list_of_WF_case
 from own.move import run_program
 
+
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
         messagebox.showinfo(title="KOMUNIKAT",
@@ -61,18 +62,20 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                 status_invoice_list.append("no file found")
                 continue
             else:
-                status_multiple_invoice_list = []
+                status_multiple_invoice_list = ""
                 for i, match in enumerate(invoice_found):
                     if match in comment_invoice_list:
-                        status_multiple_invoice_list.append(match)
+                        status_multiple_invoice_list= match
                     else:
 
                         if i == 0:
-                            status_multiple_invoice_list.append("OK")
+                            status_multiple_invoice_list = "OK"
                             run_program(invoice_folder, match, output_dir, newfilename)
                         else:
-                            newfilename = newfilename.replace('.pdf', str(i) + '.pdf')
-                            run_program(invoice_folder, match, output_dir, newfilename)
+                            # newnewfilename = newfilename.replace('.pdf', str(i) + '.pdf')
+                            newnewfilename = newfilename.replace('.pdf', "")
+                            newnewfilename = newnewfilename + str(i) + '.pdf'
+                            run_program(invoice_folder, match, output_dir, newnewfilename)
                 status_invoice_list.append(status_multiple_invoice_list)
             popup.update()
             progress += progress_step
