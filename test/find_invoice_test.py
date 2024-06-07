@@ -44,4 +44,4 @@ def test_second_invoice():
     invoice_filename = find_invoice("find second invoice",
                                     "26908/BR/2023")
 
-    assert invoice_filename == ["find second invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf"]
+    assert invoice_filename == ["find second invoice/fv_pl_1_1bf5a3c1809c7fe44bd2e78915c3.pdf"]

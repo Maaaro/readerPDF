@@ -2,8 +2,8 @@ import os.path
 
 from pytest import raises
 
-from own.invoice import pdf_files
-from own.invoice_id import new_filenames
+from own.invoice import pdf_files, find_invoice
+from own.invoice_id import new_filenames, invoice_numbers
 from own.move import run_program
 
 
@@ -25,42 +25,51 @@ def test_validate_non_empty_output_directory():
 
 def test_copies_file_from_input_directory():
     create_file("../resource/bankStatements/e.txt", 'car3')
-    run_program("../resource/bankStatements/", 'e.txt', "../resource/tmp/", '5_wb.txt')
+    run_program("../resource/bankStatements/", '../resource/bankStatements/e.txt', "../resource/tmp/", '5_wb.txt')
     assert read_file("../resource/tmp/5_wb.txt") == 'car3'
 
 
 def test_copies_two_files_from_input():
     create_file("../resource/bankStatements/a.txt", 'car1')
     create_file("../resource/bankStatements/b.txt", 'car2')
-    run_program("../resource/bankStatements", 'a.txt', "../resource/tmp/", '1_wb.txt')
-    run_program("../resource/bankStatements", 'b.txt', "../resource/tmp/", '2_wb.txt')
+    run_program("../resource/bankStatements", '../resource/bankStatements/a.txt', "../resource/tmp/", '1_wb.txt')
+    run_program("../resource/bankStatements", '../resource/bankStatements/b.txt', "../resource/tmp/", '2_wb.txt')
     assert read_file("../resource/tmp/2_wb.txt") == 'car2'
 
 
 def test_rename_file_with_bank_statement_ordinal_number():
     remove_if_exists("../resource/tmp/a.txt")
     create_file("../resource/bankStatements/a.txt", 'green')
-    run_program("../resource/bankStatements", 'a.txt', "../resource/tmp/", '1_wb.txt')
+    run_program("../resource/bankStatements", '../resource/bankStatements/a.txt', "../resource/tmp/", '1_wb.txt')
     assert read_file("../resource/tmp/1_wb.txt") == 'green'
 
 
 def test_move_two_file_with_bank_statement_ordinal_number():
     create_file("../resource/bankStatements/c.txt", 'blue')
     create_file("../resource/bankStatements/d.txt", 'red')
-    run_program("../resource/bankStatements/", 'c.txt', "../resource/tmp/", '3_wb.txt')
-    run_program("../resource/bankStatements/", 'd.txt', "../resource/tmp/", '4_wb.txt')
+    run_program("../resource/bankStatements/", '../resource/bankStatements/c.txt', "../resource/tmp/", '3_wb.txt')
+    run_program("../resource/bankStatements/", '../resource/bankStatements/d.txt', "../resource/tmp/", '4_wb.txt')
 
     assert read_file("../resource/tmp/4_wb.txt") == 'red'
 
 
 def test_two_files_with_the_same_invoice_number():
-    invoicefound = ["fv_pl_1_1bf5a3c1809c7fe44bd2e78915c3.pdf", "fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf"]
-    # "26908/BR/2023"
-    new_filename = new_filenames("get_invoice_id_tests_folder/faktury_id.xlsx", "TheSame", "Lp", "_fv.pdf")
-    run_program("test/two_file_with_the_same_invoice_number", invoicefound[1], "../resource/tmp/", new_filename)
 
-    output = pdf_files("../resource/tmp/")
-    assert output == ["aa_fv.pdf", "aa1_fv.pdf"]
+    invoice_folder = "../test/"
+    output_dir = "../resource/tmp/"
+    newfilename = "1_fv.pdf"
+    list_of_invoices = ["26908/BR/2023"]
+
+    invoice_found = ["../test/double invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf", "../test/find second invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf"]
+    for i, match in enumerate(invoice_found):
+        if i == 0:
+            run_program(invoice_folder, match, output_dir, newfilename)
+        else:
+            newnewfilename = newfilename.replace('.pdf', "")
+            newnewfilename = newnewfilename + str(i) + '.pdf'
+            run_program(invoice_folder, match, output_dir, newnewfilename)
+
+    assert pdf_files("../resource/tmp") == ["../resource/tmp/1_fv.pdf", "../resource/tmp/1_fv1.pdf"]
 
 
 def remove_if_exists(filename: str) -> None:
