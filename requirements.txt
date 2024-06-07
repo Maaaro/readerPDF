@@ -1,8 +1,8 @@
-pandas
-PyPDF2
+pandas~=2.2.2
+PyPDF2~=3.0.1
 openpyxl
 tika
-pytest
+pytest~=8.1.1
 pycryptodome
 pikepdf
 python-docx
@@ -11,3 +11,4 @@ mammoth
 pdfkit
 wkhtmltopdf
 pymupdf
+fitz~=0.0.1.dev2

@@ -1,14 +1,8 @@
 import os.path
 
 from pytest import raises
-
-from own.invoice import pdf_files, find_invoice
-from own.invoice_id import new_filenames, invoice_numbers
+from own.invoice import pdf_files
 from own.move import run_program
-
-
-# def test_standard():
-#     run_program('input', '', 'output', '', '')
 
 
 def test_validate_non_empty_input_directory():
@@ -54,11 +48,11 @@ def test_move_two_file_with_bank_statement_ordinal_number():
 
 
 def test_two_files_with_the_same_invoice_number():
-
+    remove_if_exists("../resource/tmp/1_fv.pdf")
+    remove_if_exists("../resource/tmp/1_fv1.pdf")
     invoice_folder = "../test/"
     output_dir = "../resource/tmp/"
     newfilename = "1_fv.pdf"
-    list_of_invoices = ["26908/BR/2023"]
 
     invoice_found = ["../test/double invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf", "../test/find second invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf"]
     for i, match in enumerate(invoice_found):

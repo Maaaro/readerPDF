@@ -1,7 +1,6 @@
 import fnmatch
 import os
-import fitz
-
+import pymupdf
 
 def find_invoice(invoices_folder: str, invoice_number: str) -> list[str]:
     filepaths: list[str] = pdf_files(invoices_folder)
@@ -9,33 +8,31 @@ def find_invoice(invoices_folder: str, invoice_number: str) -> list[str]:
         raise Exception("empty invoice number")
     if len(filepaths) == 0:
         return ["no file found"]
-    lista_komentarzy = []
-    lista_sciezek = []
+    list_of_comments = []
+    list_of_paths = []
     for filepath in filepaths:
         list_pdf_files = []
-        komentarz = []
-        with fitz.open(filepath) as pdf_file:
+        filepath_result_comment = []
+        with pymupdf.open(filepath) as pdf_file:
             file_content = ""
 
             for page in pdf_file:
                 file_content += page.get_text().strip()
             if invoice_number in file_content:
                 list_pdf_files.append(filepath)
-                komentarz.append("ok")
-            # print(list_pdf_files)
-            lista_sciezek.append(list_pdf_files)
-            lista_komentarzy.append(komentarz)
-    # print("suma wyników " + str(lista_sciezek))
+                filepath_result_comment.append("ok")
+            list_of_paths.append(list_pdf_files)
+            list_of_comments.append(filepath_result_comment)
     total = []
-    for list, koment in zip(lista_sciezek, lista_komentarzy):
-        for number, ko in zip(list, koment):
+    for path, comment in zip(list_of_paths, list_of_comments):
+        for number, ko in zip(path, comment):
             if 'ok' in ko:
                 total.append(number)
     return total
 
 def pdf_page_content(filepath: str) -> str:
     try:
-        with fitz.open(filepath, 'rb') as pdf_file:
+        with pymupdf.open(filepath, 'rb') as pdf_file:
             page_content = ""
 
             for page in pdf_file:

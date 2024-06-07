@@ -1,8 +1,7 @@
-import os
 import tkinter
+
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
-
 from own.invoice import find_invoice
 from own.invoice_id import invoice_numbers, new_filenames, add_comment, list_of_WF_case
 from own.move import run_program
@@ -10,41 +9,16 @@ from own.move import run_program
 
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
-        messagebox.showinfo(title="KOMUNIKAT",
-                            message="Należy wypełnić wszystkie pola aby program działał poprawnie")
+        gui_meseges(0)
     else:
-        try:
-            list_of_invoices = invoice_numbers(excelpath, "Sheet1",
-                                               "Nr fv")
-        except:
-            messagebox.showinfo(title="KOMUNIKAT",
-                                message="Nie udało się pobrać listy fv")
-
-        try:
-            list_of_newfilenames = new_filenames(excelpath, "Sheet1", "Lp", fileprefix)
-        except:
-            messagebox.showinfo(title="KOMUNIKAT",
-                                message="Nie udało się pobrać listy z nazwami plików")
-
-        try:
-            wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
-            # wf_cases = [x for x in wf_cases_with_nan if x==x]
-        except:
-            messagebox.showinfo(title="KOMUNIKAT",
-                                message="Nie udało się pobrać listy z nazwami spraw w WF")
+        list_of_invoices = get_invoices(excelpath)
+        list_of_newfilenames = get_new_filenames(excelpath, fileprefix)
+        wf_cases = get_wf_cases(excelpath)
 
         comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
         index = 0
 
-        popup = tkinter.Toplevel()
-        popup.title("Progress bar")
-        progress = 0
-        ttk.Label(popup, text="          Wyszukiwanie    ").grid(row=0, column=0)
-        progress_var = tkinter.DoubleVar()
-        progress_bar = ttk.Progressbar(popup, variable=progress_var, maximum=len(list_of_invoices))
-        progress_bar.grid(row=1, column=0)
-        popup.pack_slaves()
-        progress_step = int(1)
+        popup, progress, progress_step, progress_var = show_progressbar(list_of_invoices)
         status_invoice_list = []
         for (invoice, newfilename, wf_number) in zip(list_of_invoices, list_of_newfilenames, wf_cases):
 
@@ -65,28 +39,86 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                 status_multiple_invoice_list = ""
                 for i, match in enumerate(invoice_found):
                     if match in comment_invoice_list:
-                        status_multiple_invoice_list= match
+                        status_multiple_invoice_list = match
                     else:
 
                         if i == 0:
                             status_multiple_invoice_list = "OK"
                             run_program(invoice_folder, match, output_dir, newfilename)
                         else:
-                            # newnewfilename = newfilename.replace('.pdf', str(i) + '.pdf')
                             newnewfilename = newfilename.replace('.pdf', "")
                             newnewfilename = newnewfilename + str(i) + '.pdf'
                             run_program(invoice_folder, match, output_dir, newnewfilename)
                 status_invoice_list.append(status_multiple_invoice_list)
-            popup.update()
-            progress += progress_step
-            progress_var.set(progress)
+            update_progressbar(popup, progress, progress_step, progress_var)
 
             index = index + 1
 
         add_comment(excelpath, "Sheet1", status_invoice_list, fileprefix)
-        popup.destroy()
+        destroy_progressbar(popup)
+        gui_meseges(1)
+
+
+def gui_meseges(message: int):
+    if message == 0:
+        messagebox.showinfo(title="KOMUNIKAT",
+                            message="Należy wypełnić wszystkie pola aby program działał poprawnie")
+    elif message == 1:
         messagebox.showinfo(title="KOMUNIKAT",
                             message="Przeniesiono")
+
+
+def destroy_progressbar(popup):
+    popup.destroy()
+
+
+def update_progressbar(popup, progress: int, progress_step: int, progress_var: DoubleVar):
+    popup.update()
+    progress += progress_step
+    progress_var.set(progress)
+
+
+def show_progressbar(list_of_invoices: list[str]):
+    popup = tkinter.Toplevel()
+    popup.title("Progress bar")
+    progress = 0
+    ttk.Label(popup, text="          Wyszukiwanie    ").grid(row=0, column=0)
+    progress_var = tkinter.DoubleVar()
+    progress_bar = ttk.Progressbar(popup, variable=progress_var, maximum=len(list_of_invoices))
+    progress_bar.grid(row=1, column=0)
+    popup.pack_slaves()
+    progress_step = int(1)
+    return popup, progress, progress_step, progress_var
+
+
+def get_wf_cases(excelpath: str):
+    try:
+        wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
+        # wf_cases = [x for x in wf_cases_with_nan if x==x]
+    except:
+        messagebox.showinfo(title="KOMUNIKAT",
+                            message="Nie udało się pobrać listy z nazwami spraw w WF")
+    return wf_cases
+
+
+def get_new_filenames(excelpath: str, fileprefix: str):
+    try:
+        list_of_newfilenames = new_filenames(excelpath, "Sheet1", "Lp", fileprefix)
+    except:
+        messagebox.showinfo(title="KOMUNIKAT",
+                            message="Nie udało się pobrać listy z nazwami plików")
+    return list_of_newfilenames
+
+
+def get_invoices(excelpath: str):
+    try:
+        list_of_invoices = invoice_numbers(excelpath, "Sheet1",
+                                           "Nr fv")
+    except:
+        messagebox.showinfo(title="KOMUNIKAT",
+                            message="Nie udało się pobrać listy fv")
+    return list_of_invoices
+
 
 def gui():
     root = Tk()
@@ -175,5 +207,6 @@ def gui():
             excelpath_entry.config(state="disable")
 
     root.mainloop()
+
 
 gui()
