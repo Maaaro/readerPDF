@@ -155,8 +155,7 @@ def gui():
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
 
-    text = (
-                "Plik Excel, z którego mają zostać pobrane dane musi zawierać zakładkę 'Sheet1', która zawiera kolumny: \n" +
+    text = ("\nPlik Excel, z którego mają zostać pobrane dane musi zawierać zakładkę 'Sheet1', która zawiera kolumny: \n" +
                 "   - 'Lp' - na podstawie, której przypisze nową nazwę, \n" +
                 "   - 'Nr fv' - numer faktury, który ma zostać znaleziony, \n" +
                 "   - 'WF' - numer sprawy w WorkFlow - do ograniczenia wyszukiwania (dotyczy tylko fv). Jeśli to pole będzie puste to program pominie tą pozycję.\n")

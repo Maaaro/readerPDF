@@ -64,5 +64,6 @@ def list_of_WF_case(excelpath: str, sheetname: str, wf_number_columnname: str):
     except:
         return "file not found"
     df = df.sort_values(["Lp"], ascending=True)
+    df = df.replace("", "empty")
     wf_cases = df[wf_number_columnname].to_list()
     return wf_cases
