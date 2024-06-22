@@ -2,7 +2,7 @@ import os
 import tempfile
 import pytest
 
-from own.invoice import find_invoice
+from own.find_invoices import find_invoice
 
 def test_one_invoice_one_file():
     invoice_filename = find_invoice("find_invoice_resources",

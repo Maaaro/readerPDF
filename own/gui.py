@@ -2,21 +2,24 @@ import tkinter
 
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
-from own.invoice import find_invoice
-from own.invoice_id import invoice_numbers, new_filenames, add_comment, list_of_WF_case
-from own.move import run_program
-
+from own.find_invoices import find_invoice, pdf_files
+from own.get_data_from_excel import invoice_numbers, new_filenames, add_comment, list_of_WF_case
+from own.copy_pdf import copy_pdf_file
 
 
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
-        gui_meseges(0)
+        return gui_meseges(0)
     else:
         list_of_invoices = get_invoices(excelpath)
         list_of_newfilenames = get_new_filenames(excelpath, fileprefix)
         wf_cases = get_wf_cases(excelpath)
 
-        comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
+        files_exist_in_sourcepath = pdf_files(invoice_folder)
+        if len(files_exist_in_sourcepath) == 0:
+            gui_meseges(6)
+
+        error_comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
         index = 0
 
         popup, progress, progress_step, progress_var = show_progressbar(list_of_invoices)
@@ -29,27 +32,29 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                     continue
                 else:
                     newpath = invoice_folder + '/' + str(wf_number) + '/'
-                invoice_found = find_invoice(newpath, str(invoice))
+                    invoice_found = find_invoice(newpath, str(invoice))
             else:
                 invoice_found = find_invoice(invoice_folder, str(invoice))
             items_invoice_found = len(invoice_found)
+            # if fileprefix == "_fv.pdf":
+            #     add_number_of_files_as_comment(excelpath, "Sheet1", str(items_invoice_found))
             if items_invoice_found == 0 or 'no file found' in invoice_found:
                 status_invoice_list.append("no file found")
                 continue
             else:
                 status_multiple_invoice_list = ""
                 for i, match in enumerate(invoice_found):
-                    if match in comment_invoice_list:
+                    if match in error_comment_invoice_list:
                         status_multiple_invoice_list = match
                     else:
 
                         if i == 0:
                             status_multiple_invoice_list = "OK"
-                            run_program(invoice_folder, match, output_dir, newfilename)
+                            copy_pdf_file(invoice_folder, match, output_dir, newfilename)
                         else:
-                            newnewfilename = newfilename.replace('.pdf', "")
-                            newnewfilename = newnewfilename + str(i) + '.pdf'
-                            run_program(invoice_folder, match, output_dir, newnewfilename)
+                            newfilename_with_number = newfilename.replace('.pdf', "")
+                            newfilename_with_number = newfilename_with_number + str(i) + '.pdf'
+                            copy_pdf_file(invoice_folder, match, output_dir, newfilename_with_number)
                 status_invoice_list.append(status_multiple_invoice_list)
             update_progressbar(popup, progress, progress_step, progress_var)
 
@@ -57,16 +62,34 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
 
         add_comment(excelpath, "Sheet1", status_invoice_list, fileprefix)
         destroy_progressbar(popup)
-        gui_meseges(1)
+        if "ok" in status_invoice_list:
+            gui_meseges(1)
+        else:
+            gui_meseges(5)
 
 
 def gui_meseges(message: int):
     if message == 0:
-        messagebox.showinfo(title="KOMUNIKAT",
-                            message="Należy wypełnić wszystkie pola aby program działał poprawnie")
+        messagebox.showwarning(title="KOMUNIKAT",
+                               message="Należy wypełnić wszystkie pola aby program działał poprawnie.")
     elif message == 1:
         messagebox.showinfo(title="KOMUNIKAT",
-                            message="Przeniesiono")
+                            message="Przeniesiono.")
+    elif message == 2:
+        messagebox.showwarning(title="KOMUNIKAT",
+                               message="Nie udało się pobrać listy z nazwami spraw w WF.")
+    elif message == 3:
+        messagebox.showwarning(title="KOMUNIKAT",
+                               message="Nie udało się pobrać listy z nazwami plików.")
+    elif message == 4:
+        messagebox.showwarning(title="KOMUNIKAT",
+                               message="Nie udało się pobrać listy fv.")
+    elif message == 5:
+        messagebox.showwarning(title="KOMUNIKAT",
+                               message="Nie znaleziono żadnej fv.")
+    elif message == 6:
+        messagebox.showwarning(title="KOMUNIKAT",
+                               message="Folder źródłowy jest pusty.")
 
 
 def destroy_progressbar(popup):
@@ -95,10 +118,8 @@ def show_progressbar(list_of_invoices: list[str]):
 def get_wf_cases(excelpath: str):
     try:
         wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
-        # wf_cases = [x for x in wf_cases_with_nan if x==x]
     except:
-        messagebox.showinfo(title="KOMUNIKAT",
-                            message="Nie udało się pobrać listy z nazwami spraw w WF")
+        return gui_meseges(2)
     return wf_cases
 
 
@@ -106,8 +127,8 @@ def get_new_filenames(excelpath: str, fileprefix: str):
     try:
         list_of_newfilenames = new_filenames(excelpath, "Sheet1", "Lp", fileprefix)
     except:
-        messagebox.showinfo(title="KOMUNIKAT",
-                            message="Nie udało się pobrać listy z nazwami plików")
+        return gui_meseges(3)
+
     return list_of_newfilenames
 
 
@@ -116,8 +137,8 @@ def get_invoices(excelpath: str):
         list_of_invoices = invoice_numbers(excelpath, "Sheet1",
                                            "Nr fv")
     except:
-        messagebox.showinfo(title="KOMUNIKAT",
-                            message="Nie udało się pobrać listy fv")
+        return gui_meseges(4)
+
     return list_of_invoices
 
 
@@ -125,40 +146,52 @@ def gui():
     root = Tk()
     root.title("Program do przenoszenia faktur i wyciągów bankowych")
 
-    frame = ttk.Frame(root, padding=100)
-    frame.grid(column=0, row=0)
+    textframe = ttk.Frame(root, padding=1)
+    textframe.grid(column=0, row=0)
+    textframe.columnconfigure(0, weight=1)
+    textframe.rowconfigure(0, weight=1)
+    frame = ttk.Frame(root, padding=15)
+    frame.grid(column=0, row=1)
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
 
-    ttk.Label(frame, text="Folder z fakturami/WB").grid(column=1, row=3)
+    text = (
+                "Plik Excel, z którego mają zostać pobrane dane musi zawierać zakładkę 'Sheet1', która zawiera kolumny: \n" +
+                "   - 'Lp' - na podstawie, której przypisze nową nazwę, \n" +
+                "   - 'Nr fv' - numer faktury, który ma zostać znaleziony, \n" +
+                "   - 'WF' - numer sprawy w WorkFlow - do ograniczenia wyszukiwania (dotyczy tylko fv). Jeśli to pole będzie puste to program pominie tą pozycję.\n")
+    ttk.Label(textframe, text=text).grid(column=0, row=0, padx=5, pady=5)
+
+    ttk.Label(frame, text="Folder z fakturami / WB").grid(column=1, row=2, padx=5, pady=5)
     invoices_folder = tkinter.StringVar()
     invoices_folder_entry = ttk.Entry(frame, width=80, textvariable=invoices_folder, state="disable")
-    invoices_folder_entry.grid(column=2, row=3)
+    invoices_folder_entry.grid(column=2, row=2, padx=5, pady=5)
 
-    ttk.Label(frame, text="Folder docelowy").grid(column=1, row=4)
+    ttk.Label(frame, text="Folder docelowy").grid(column=1, row=3, padx=5, pady=5)
     output_dir = tkinter.StringVar()
     output_dir_entry = ttk.Entry(frame, width=80, textvariable=output_dir, state="disable")
-    output_dir_entry.grid(column=2, row=4)
+    output_dir_entry.grid(column=2, row=3, padx=5, pady=5)
 
-    ttk.Label(frame, text="Plik excel z fakturami").grid(column=1, row=5)
+    ttk.Label(frame, text="Plik Excel z fakturami").grid(column=1, row=4, padx=5, pady=5)
     excelpath = tkinter.StringVar()
     excelpath_entry = ttk.Entry(frame, width=80, textvariable=excelpath, state="disable")
-    excelpath_entry.grid(column=2, row=5)
+    excelpath_entry.grid(column=2, row=4, padx=5, pady=5)
 
-    ttk.Button(root, text="Podaj folder z fakturami/WB", command=lambda: switch_methode_of_filedialog("Invoices")).grid(
-        column=3, row=3, sticky=W)
-    ttk.Button(root, text="Podaj folder docelowy", command=lambda: switch_methode_of_filedialog("Output")).grid(
-        column=3, row=4, sticky=W)
-    ttk.Button(root, text="Podaj plik ecxel", command=lambda: switch_methode_of_filedialog("Excel")).grid(column=3,
-                                                                                                          row=5,
-                                                                                                          sticky=W)
+    ttk.Button(frame, text="Podaj folder z fakturami / WB", command=lambda: file_to_search("Invoices")).grid(
+        column=3, row=2, sticky=W, padx=5, pady=5)
+    ttk.Button(frame, text="Podaj folder docelowy", command=lambda: file_to_search("Output")).grid(
+        column=3, row=3, sticky=W, padx=5, pady=5)
+    ttk.Button(frame, text="Podaj plik Ecxel", command=lambda: file_to_search("Excel")).grid(column=3, row=4, sticky=W,
+                                                                                             padx=5, pady=5)
     ttk.Button(frame, text="Przenieś",
-               command=lambda: selected_radiobutton()).grid(column=3, row=7)
-    ttk.Button(frame, text="Quit", command=root.destroy).grid(column=4, row=7)
+               command=lambda: selected_radiobutton()).grid(column=3, row=7, padx=10, pady=10)
+    ttk.Button(frame, text="Zamknij program", command=root.destroy).grid(column=4, row=7, padx=10, pady=10)
 
     document_type = StringVar()
-    ttk.Radiobutton(frame, text="Szukaj faktur", variable=document_type, value="Invoice").grid(column=3, row=1)
-    ttk.Radiobutton(frame, text="Szukaj wyciągów bankowych", variable=document_type, value="WB").grid(column=4, row=1)
+    ttk.Radiobutton(frame, text="Szukaj faktur", variable=document_type, value="Invoice").grid(column=3, row=1, padx=10,
+                                                                                               pady=10)
+    ttk.Radiobutton(frame, text="Szukaj wyciągów bankowych", variable=document_type, value="WB").grid(column=4, row=1,
+                                                                                                      padx=10, pady=10)
 
     def selected_radiobutton():
         if document_type.get() == "Invoice" or document_type.get() == "WB":
@@ -170,7 +203,7 @@ def gui():
         else:
             messagebox.showinfo(title="Uwaga", message="Wybierz 'Szukaj faktur' lub 'wyciągów bankowych'")
 
-    def switch_methode_of_filedialog(option: str):
+    def file_to_search(option: str):
         tkinter.Tk().withdraw()
 
         if option == "Invoices" or option == "Output":
@@ -208,6 +241,5 @@ def gui():
             excelpath_entry.config(state="disable")
 
     root.mainloop()
-
 
 gui()

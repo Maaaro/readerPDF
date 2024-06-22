@@ -1,6 +1,6 @@
 import codecs
 
-def run_program(invoices_folder: str, invoice_found: str, output_dir: str, filenames: str) -> None:
+def copy_pdf_file(invoices_folder: str, invoice_found: str, output_dir: str, filenames: str) -> None:
     if len(invoices_folder) == 0:
         raise Exception('Empty input directory')
     if len(output_dir) == 0:
