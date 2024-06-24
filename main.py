@@ -2,7 +2,7 @@
 #
 # import pandas as pd
 # from PyPDF2 import PdfReader
-#
+# def main()
 # invoice_filepaths = glob.glob("resource/invoice/*.pdf")
 # print("Lista zrodel: ", invoice_filepaths)
 #
@@ -26,3 +26,6 @@
 #             break
 #         print("Nie znaleziono ->", id)
 #         _match = 0
+
+# if __name__ == "__main__":
+    # main()
