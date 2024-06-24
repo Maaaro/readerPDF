@@ -32,7 +32,7 @@ def test_empty_invoice_number():
 def test_malformed_pdf():
     with pytest.raises(Exception) as e:
         find_invoice("malformed pdf", "FV/2022/08/1253/3/11034")
-    assert str(e.value) == "Failed to open file 'malformed pdf/test.pdf'."
+    assert str(e.value) == "Failed to open file 'malformed pdf/tests.pdf'."
 
 def test_no_match():
     invoice_filename = find_invoice("no match for invoice number",

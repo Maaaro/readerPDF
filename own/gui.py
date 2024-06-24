@@ -8,6 +8,7 @@ from own.copy_pdf import copy_pdf_file
 
 
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
+
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
         return gui_meseges(0)
     else:
@@ -36,8 +37,6 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
             else:
                 invoice_found = find_invoice(invoice_folder, str(invoice))
             items_invoice_found = len(invoice_found)
-            # if fileprefix == "_fv.pdf":
-            #     add_number_of_files_as_comment(excelpath, "Sheet1", str(items_invoice_found))
             if items_invoice_found == 0 or 'no file found' in invoice_found:
                 status_invoice_list.append("no file found")
                 continue

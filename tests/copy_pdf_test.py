@@ -50,11 +50,11 @@ def test_move_two_file_with_bank_statement_ordinal_number():
 def test_two_files_with_the_same_invoice_number():
     remove_if_exists("../resource/tmp/1_fv.pdf")
     remove_if_exists("../resource/tmp/1_fv1.pdf")
-    invoice_folder = "../test/"
+    invoice_folder = "../tests/"
     output_dir = "../resource/tmp/"
     newfilename = "1_fv.pdf"
 
-    invoice_found = ["../test/double invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf", "../test/find second invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf"]
+    invoice_found = ["../tests/double invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf", "../tests/find second invoice/fv_pl_1_1bf5a3c1809c7fe44bd07882e78915c3.pdf"]
     for i, match in enumerate(invoice_found):
         if i == 0:
             copy_pdf_file(invoice_folder, match, output_dir, newfilename)

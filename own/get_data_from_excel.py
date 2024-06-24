@@ -26,10 +26,10 @@ def new_filenames(excelpath: str, sheetname: str, new_filename_column: str, file
         return "file not found"
 
     df = df.sort_values("Lp", ascending=True)
-    new_filename = df[new_filename_column].to_list()
-    new_filename = [str(int(i)) + fileprefix for i in new_filename]
+    list_of_new_filenames = df[new_filename_column].to_list()
+    list_of_new_filenames_with_prefix = [str(int(i)) + fileprefix for i in list_of_new_filenames]
 
-    return new_filename
+    return list_of_new_filenames_with_prefix
 
 def add_comment(excelpath: str, sheetname: str, status_invoice_list: list, fileprefix: str):
     try:
