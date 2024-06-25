@@ -8,7 +8,6 @@ from own.copy_pdf import copy_pdf_file
 
 
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
-
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
         return gui_meseges(0)
     else:
@@ -143,52 +142,70 @@ def get_invoices(excelpath: str):
 
 def gui():
     root = Tk()
+    root.geometry("800x325")
+    Grid.rowconfigure(root, 0, weight=1)
+    Grid.columnconfigure(root, 0, weight=1)
+
     root.title("Program do przenoszenia faktur i wyciągów bankowych")
 
     textframe = ttk.Frame(root, padding=1)
-    textframe.grid(column=0, row=0)
-    textframe.columnconfigure(0, weight=1)
-    textframe.rowconfigure(0, weight=1)
+    Grid.columnconfigure(textframe, 0, weight=1)
+    Grid.rowconfigure(textframe, 0, weight=1)
+    textframe.grid(column=0, row=0, sticky="NSEW")
+
     frame = ttk.Frame(root, padding=15)
-    frame.grid(column=0, row=1)
-    root.columnconfigure(0, weight=1)
-    root.rowconfigure(0, weight=1)
+    frame.grid(column=0, row=1, sticky="NSEW")
+    Grid.rowconfigure(frame, 1, weight=1)
+    Grid.rowconfigure(frame, 2, weight=1)
+    Grid.rowconfigure(frame, 3, weight=1)
+    Grid.rowconfigure(frame, 4, weight=1)
+    Grid.rowconfigure(frame, 5, weight=1)
+    Grid.rowconfigure(frame, 6, weight=1)
+    Grid.rowconfigure(frame, 7, weight=1)
 
-    text = ("\nPlik Excel, z którego mają zostać pobrane dane musi zawierać zakładkę 'Sheet1', która zawiera kolumny: \n" +
-                "   - 'Lp' - na podstawie, której przypisze nową nazwę, \n" +
-                "   - 'Nr fv' - numer faktury, który ma zostać znaleziony, \n" +
-                "   - 'WF' - numer sprawy w WorkFlow - do ograniczenia wyszukiwania (dotyczy tylko fv). Jeśli to pole będzie puste to program pominie tą pozycję.\n")
-    ttk.Label(textframe, text=text).grid(column=0, row=0, padx=5, pady=5)
+    Grid.columnconfigure(frame, 0, weight=1)
+    Grid.columnconfigure(frame, 1, weight=1)
+    Grid.columnconfigure(frame, 2, weight=1)
 
-    ttk.Label(frame, text="Folder z fakturami / WB").grid(column=1, row=2, padx=5, pady=5)
+    text = (
+            "\nPlik Excel, z którego mają zostać pobrane dane musi zawierać zakładkę 'Sheet1', która zawiera kolumny: \n" +
+            "   - 'Lp' - na podstawie, której przypisze nową nazwę, \n" +
+            "   - 'Nr fv' - numer faktury, który ma zostać znaleziony, \n" +
+            "   - 'WF' - numer sprawy w WorkFlow - do ograniczenia wyszukiwania (dotyczy tylko fv). Jeśli to pole będzie puste to program pominie tą pozycję.\n")
+    ttk.Label(textframe, text=text).grid(column=0, row=0, sticky="NSEW", padx=5, pady=5)
+
+    ttk.Label(frame, text="Folder z fakturami / WB").grid(column=0, row=2, sticky="W", padx=5, pady=5)
     invoices_folder = tkinter.StringVar()
-    invoices_folder_entry = ttk.Entry(frame, width=80, textvariable=invoices_folder, state="disable")
-    invoices_folder_entry.grid(column=2, row=2, padx=5, pady=5)
+    invoices_folder_entry = ttk.Entry(frame, textvariable=invoices_folder, state="disable")
+    invoices_folder_entry.grid(column=1, row=2, sticky="NSEW", padx=5, pady=5)
 
-    ttk.Label(frame, text="Folder docelowy").grid(column=1, row=3, padx=5, pady=5)
+    ttk.Label(frame, text="Folder docelowy").grid(column=0, row=3, sticky="W", padx=5, pady=5)
     output_dir = tkinter.StringVar()
-    output_dir_entry = ttk.Entry(frame, width=80, textvariable=output_dir, state="disable")
-    output_dir_entry.grid(column=2, row=3, padx=5, pady=5)
+    output_dir_entry = ttk.Entry(frame, textvariable=output_dir, state="disable")
+    output_dir_entry.grid(column=1, row=3, sticky="NSEW", padx=5, pady=5)
 
-    ttk.Label(frame, text="Plik Excel z fakturami").grid(column=1, row=4, padx=5, pady=5)
+    ttk.Label(frame, text="Plik Excel z fakturami").grid(column=0, row=4, sticky="W", padx=5, pady=5)
     excelpath = tkinter.StringVar()
-    excelpath_entry = ttk.Entry(frame, width=80, textvariable=excelpath, state="disable")
-    excelpath_entry.grid(column=2, row=4, padx=5, pady=5)
+    excelpath_entry = ttk.Entry(frame, textvariable=excelpath, state="disable")
+    excelpath_entry.grid(column=1, row=4, sticky="NSEW", padx=5, pady=5)
 
     ttk.Button(frame, text="Podaj folder z fakturami / WB", command=lambda: file_to_search("Invoices")).grid(
-        column=3, row=2, sticky=W, padx=5, pady=5)
+        column=2, row=2, sticky="W", padx=5, pady=5)
     ttk.Button(frame, text="Podaj folder docelowy", command=lambda: file_to_search("Output")).grid(
-        column=3, row=3, sticky=W, padx=5, pady=5)
-    ttk.Button(frame, text="Podaj plik Ecxel", command=lambda: file_to_search("Excel")).grid(column=3, row=4, sticky=W,
+        column=2, row=3, sticky="W", padx=5, pady=5)
+    ttk.Button(frame, text="Podaj plik Ecxel", command=lambda: file_to_search("Excel")).grid(column=2, row=4,
+                                                                                             sticky="W",
                                                                                              padx=5, pady=5)
     ttk.Button(frame, text="Przenieś",
-               command=lambda: selected_radiobutton()).grid(column=3, row=7, padx=10, pady=10)
-    ttk.Button(frame, text="Zamknij program", command=root.destroy).grid(column=4, row=7, padx=10, pady=10)
+               command=lambda: selected_radiobutton()).grid(column=2, row=7, sticky="NS", padx=10, pady=10)
+    ttk.Button(frame, text="Zamknij program", command=root.destroy).grid(column=3, row=7, sticky="W", padx=10, pady=10)
 
     document_type = StringVar()
-    ttk.Radiobutton(frame, text="Szukaj faktur", variable=document_type, value="Invoice").grid(column=3, row=1, padx=10,
+    ttk.Radiobutton(frame, text="Szukaj faktur", variable=document_type, value="Invoice").grid(column=2, row=1,
+                                                                                               sticky="NSEW", padx=10,
                                                                                                pady=10)
-    ttk.Radiobutton(frame, text="Szukaj wyciągów bankowych", variable=document_type, value="WB").grid(column=4, row=1,
+    ttk.Radiobutton(frame, text="Szukaj wyciągów bankowych", variable=document_type, value="WB").grid(column=3, row=1,
+                                                                                                      sticky="W",
                                                                                                       padx=10, pady=10)
 
     def selected_radiobutton():
@@ -239,5 +256,6 @@ def gui():
             excelpath_entry.config(state="disable")
 
     root.mainloop()
+
 
 gui()
