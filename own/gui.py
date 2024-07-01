@@ -257,5 +257,3 @@ def gui():
 
     root.mainloop()
 
-
-gui()
