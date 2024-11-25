@@ -1,4 +1,3 @@
-import threading
 import tkinter as tk
 import time
 from tkinter import *
@@ -9,6 +8,7 @@ from own.copy_pdf import copy_pdf_file
 
 
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
+    global progress_window
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
         return gui_meseges(0)
     else:
@@ -22,21 +22,8 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
 
         error_comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
         index = 0
-        #popup, progress, progress_step, progress_var = show_progressbar(len(list_of_invoices))
 
-        progress_window = tk.Toplevel(frame)
-        progress_window.title("Postęp")
-        progress_bar = ttk.Progressbar(progress_window, orient="horizontal", length=200, mode="determinate")
-        progress_bar.pack(pady=20)
-        progress_bar["maximum"] = len(list_of_invoices)
-
-        # Wyśrodkuj okno Toplevel względem root
-        root_x = frame.winfo_x()
-        root_y = frame.winfo_y()
-        root_width = frame.winfo_width()
-        root_height = frame.winfo_height()
-        progress_window.geometry(f"+{root_x + root_width // 2 - 150}+{root_y + root_height // 2 - 50}")
-
+        progress_bar, progress_window = show_progressbar(len(list_of_invoices))
 
         status_invoice_list = []
         for (invoice, newfilename, wf_number) in zip(list_of_invoices, list_of_newfilenames, wf_cases):
@@ -70,22 +57,15 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                             copy_pdf_file(invoice_folder, match, output_dir, newfilename_with_number)
                 status_invoice_list.append(status_multiple_invoice_list)
 
-            #threading.Timer(0.1, update_progressbar, args=(popup, progress, progress_step, progress_var)).start()
-            #update_progressbar(popup, progress, progress_step, progress_var)
-            #gui.root.after(100,update_progressbar, popup, progress, progress_step, progress_var)
-            #gui.root.after(100, gui.root.update_progressbar, popup, progress, progress_step, progress_var)
-            progress_window.update()
-            time.sleep(0.1)
-            progress_bar["value"] += 1
-
-
+            update_progressbar(progress_bar, progress_window)
 
             index = index + 1
 
         add_comment(excelpath, "Sheet1", status_invoice_list, fileprefix)
-        #destroy_progressbar(popup)
-        progress_window.destroy()
-        #gui.root.after(100, gui.root.destroy_progressbar, popup)
+
+        # progress_window.destroy()
+        destroy_progressbar(progress_window)
+
         if "ok" in status_invoice_list:
             gui_meseges(1)
         else:
@@ -115,31 +95,34 @@ def gui_meseges(message: int):
         messagebox.showwarning(title="KOMUNIKAT",
                                message="Folder źródłowy jest pusty.")
 
+    destroy_progressbar(progress_window)
 
 
-def destroy_progressbar(popup):
-    popup.destroy()
-
-
-def update_progressbar(popup, progress: int, progress_step: int, progress_var: DoubleVar):
-    popup.update()
-    progress += progress_step
-    progress_var.set(progress)
-    root.update_idletasks()
+def destroy_progressbar(progress_window):
+    progress_window.destroy()
 
 
 def show_progressbar(list_of_invoices: int):
-    popup = tk.Toplevel()
-    popup.title("Progress bar")
-    progress = 0
-    ttk.Label(popup, text="          Wyszukiwanie    ").grid(row=0, column=0)
-    progress_var = tk.DoubleVar()
-    progress_bar = ttk.Progressbar(popup, variable=progress_var, maximum=list_of_invoices)
-    progress_bar.grid(row=1, column=0)
-    popup.pack_slaves()
-    progress_step = int(1)
+    progress_window = tk.Toplevel(frame)
+    progress_window.title("Postęp")
+    progress_bar = ttk.Progressbar(progress_window, orient="horizontal", length=250, mode="determinate")
+    progress_bar.pack(pady=20)
+    progress_bar["maximum"] = list_of_invoices
 
-    return popup, progress, progress_step, progress_var
+    # Wyśrodkuj okno Toplevel względem root
+    root_x = frame.winfo_x()
+    root_y = frame.winfo_y()
+    root_width = frame.winfo_width()
+    root_height = frame.winfo_height()
+    progress_window.geometry(f"+{root_x + root_width // 2 - 150}+{root_y + root_height // 2 - 50}")
+
+    return progress_bar, progress_window
+
+
+def update_progressbar(progress_bar, progress_window):
+    progress_window.update()
+    time.sleep(0.1)
+    progress_bar["value"] += 1
 
 
 def get_wf_cases(excelpath: str):
@@ -284,6 +267,4 @@ def gui():
             excelpath_entry.insert(0, path)
             excelpath_entry.config(state="disable")
 
-
     root.mainloop()
-
