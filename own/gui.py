@@ -1,5 +1,6 @@
 import tkinter as tk
 import time
+import pandas as pd
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
 from own.find_invoices import find_invoice, pdf_files
@@ -10,7 +11,7 @@ from own.copy_pdf import copy_pdf_file
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
     global progress_window
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
-        return gui_meseges(0)
+        return gui_meseges(0, 0)
     else:
         list_of_invoices = get_invoices(excelpath)
         list_of_newfilenames = get_new_filenames(excelpath, fileprefix)
@@ -18,7 +19,7 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
 
         files_exist_in_sourcepath = pdf_files(invoice_folder)
         if len(files_exist_in_sourcepath) == 0:
-            gui_meseges(6)
+            gui_meseges(6, 0)
 
         error_comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
         index = 0
@@ -29,9 +30,10 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         for (invoice, newfilename, wf_number) in zip(list_of_invoices, list_of_newfilenames, wf_cases):
 
             if fileprefix == "_fv.pdf":
-                if wf_number == "empty":
-                    status_invoice_list.append("no WF number")
-                    continue
+                if wf_number == "empty" or wf_number == "" or pd.isnull(wf_number):
+                    # status_invoice_list.append("no WF number")
+                    # continue
+                    invoice_found = find_invoice(invoice_folder, str(invoice))
                 else:
                     newpath = invoice_folder + '/' + str(wf_number) + '/'
                     invoice_found = find_invoice(newpath, str(invoice))
@@ -40,6 +42,7 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
             items_invoice_found = len(invoice_found)
             if items_invoice_found == 0 or 'no file found' in invoice_found:
                 status_invoice_list.append("no file found")
+                update_progressbar(progress_bar, progress_window)
                 continue
             else:
                 status_multiple_invoice_list = ""
@@ -66,19 +69,19 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         # progress_window.destroy()
         destroy_progressbar(progress_window)
 
-        if "ok" in status_invoice_list:
-            gui_meseges(1)
+        if "OK" in status_invoice_list:
+            gui_meseges(1, status_invoice_list.count("OK"))
         else:
-            gui_meseges(5)
+            gui_meseges(5, 0)
 
 
-def gui_meseges(message: int):
+def gui_meseges(message: int, file_count: int):
     if message == 0:
         messagebox.showwarning(title="KOMUNIKAT",
                                message="Należy wypełnić wszystkie pola aby program działał poprawnie.")
     elif message == 1:
         messagebox.showinfo(title="KOMUNIKAT",
-                            message="Przeniesiono.")
+                            message=f"Znaleziono i przeniesiono {file_count} dokumentów")
     elif message == 2:
         messagebox.showwarning(title="KOMUNIKAT",
                                message="Nie udało się pobrać listy z nazwami spraw w WF.")
@@ -129,7 +132,7 @@ def get_wf_cases(excelpath: str):
     try:
         wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
     except:
-        return gui_meseges(2)
+        return gui_meseges(2, 0)
     return wf_cases
 
 
@@ -137,7 +140,7 @@ def get_new_filenames(excelpath: str, fileprefix: str):
     try:
         list_of_newfilenames = new_filenames(excelpath, "Sheet1", "Lp", fileprefix)
     except:
-        return gui_meseges(3)
+        return gui_meseges(3, 0)
 
     return list_of_newfilenames
 
@@ -147,7 +150,7 @@ def get_invoices(excelpath: str):
         list_of_invoices = invoice_numbers(excelpath, "Sheet1",
                                            "Nr fv")
     except:
-        return gui_meseges(4)
+        return gui_meseges(4, 0)
 
     return list_of_invoices
 
@@ -183,7 +186,7 @@ def gui():
             "\nPlik Excel, z którego mają zostać pobrane dane musi zawierać zakładkę 'Sheet1', która zawiera kolumny: \n" +
             "   - 'Lp' - na podstawie, której przypisze nową nazwę, \n" +
             "   - 'Nr fv' - numer faktury, który ma zostać znaleziony, \n" +
-            "   - 'WF' - numer sprawy w WorkFlow - do ograniczenia wyszukiwania (dotyczy tylko fv). Jeśli to pole będzie puste to program pominie tą pozycję.\n")
+            "   - 'WF' - numer sprawy w WorkFlow - do ograniczenia wyszukiwania (dotyczy tylko fv).")
     ttk.Label(textframe, text=text).grid(column=0, row=0, sticky="NSEW", padx=5, pady=5)
 
     ttk.Label(frame, text="Folder z fakturami / WB").grid(column=0, row=2, sticky="W", padx=5, pady=5)
@@ -236,14 +239,14 @@ def gui():
         if option == "Invoices" or option == "Output":
             folder_path_string = filedialog.askdirectory()
             if folder_path_string:
-                path = str((folder_path_string))
+                path = str(folder_path_string)
                 set_path_into_field(option, path)
             else:
                 messagebox.showinfo(title="Uwaga", message="Nie wskazano ściezki folderu")
         elif option == "Excel":
             folder_path_string = filedialog.askopenfilename()
             if folder_path_string:
-                path = str((folder_path_string))
+                path = str(folder_path_string)
                 set_path_into_field(option, path)
             else:
                 messagebox.showinfo(title="Uwaga", message="Nie wskazano ścieżki pliku")
