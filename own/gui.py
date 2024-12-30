@@ -11,7 +11,7 @@ from own.copy_pdf import copy_pdf_file
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
     global progress_window
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
-        return gui_meseges(0, 0)
+        return gui_meseges(0, 0, 0)
     else:
         list_of_invoices = get_invoices(excelpath)
         list_of_newfilenames = get_new_filenames(excelpath, fileprefix)
@@ -19,7 +19,7 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
 
         files_exist_in_sourcepath = pdf_files(invoice_folder)
         if len(files_exist_in_sourcepath) == 0:
-            gui_meseges(6, 0)
+            gui_meseges(6, 0, 0)
 
         error_comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
         index = 0
@@ -70,18 +70,18 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
         destroy_progressbar(progress_window)
 
         if "OK" in status_invoice_list:
-            gui_meseges(1, status_invoice_list.count("OK"))
+            gui_meseges(1, status_invoice_list.count("OK"), len(list_of_invoices))
         else:
-            gui_meseges(5, 0)
+            gui_meseges(5, 0, 0)
 
 
-def gui_meseges(message: int, file_count: int):
+def gui_meseges(message: int, file_count: int, all_invoices_to_find: int):
     if message == 0:
         messagebox.showwarning(title="KOMUNIKAT",
                                message="Należy wypełnić wszystkie pola aby program działał poprawnie.")
     elif message == 1:
         messagebox.showinfo(title="KOMUNIKAT",
-                            message=f"Znaleziono i przeniesiono {file_count} dokumentów")
+                            message=f"Dopasowano {file_count} z {all_invoices_to_find} numerów faktur")
     elif message == 2:
         messagebox.showwarning(title="KOMUNIKAT",
                                message="Nie udało się pobrać listy z nazwami spraw w WF.")
@@ -132,7 +132,7 @@ def get_wf_cases(excelpath: str):
     try:
         wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
     except:
-        return gui_meseges(2, 0)
+        return gui_meseges(2, 0, 0)
     return wf_cases
 
 
@@ -140,7 +140,7 @@ def get_new_filenames(excelpath: str, fileprefix: str):
     try:
         list_of_newfilenames = new_filenames(excelpath, "Sheet1", "Lp", fileprefix)
     except:
-        return gui_meseges(3, 0)
+        return gui_meseges(3, 0, 0)
 
     return list_of_newfilenames
 
@@ -150,7 +150,7 @@ def get_invoices(excelpath: str):
         list_of_invoices = invoice_numbers(excelpath, "Sheet1",
                                            "Nr fv")
     except:
-        return gui_meseges(4, 0)
+        return gui_meseges(4, 0, 0)
 
     return list_of_invoices
 
