@@ -1,3 +1,4 @@
+import sys
 import tkinter as tk
 import time
 import pandas as pd
@@ -213,15 +214,18 @@ def gui():
                                                                                              padx=5, pady=5)
     ttk.Button(frame, text="Przenieś",
                command=lambda: selected_radiobutton()).grid(column=2, row=7, sticky="NS", padx=10, pady=10)
-    ttk.Button(frame, text="Zamknij program", command=root.destroy).grid(column=3, row=7, sticky="W", padx=10, pady=10)
+    ttk.Button(frame, text="Zamknij program", command=lambda: exit_program()).grid(column=3, row=7, sticky="W", padx=10,
+                                                                                   pady=10)
 
     document_type = StringVar()
     ttk.Radiobutton(frame, text="Szukaj faktur", variable=document_type, value="Invoice").grid(column=2, row=1,
                                                                                                sticky="NSEW", padx=10,
                                                                                                pady=10)
     ttk.Radiobutton(frame, text="Szukaj wyciągów bankowych", variable=document_type, value="WB").grid(column=3, row=1,
-                                                                                                      sticky="W",
-                                                                                                      padx=10, pady=10)
+                                                                                                      sticky="W",padx = 10, pady = 10)
+
+    def exit_program():
+        sys.exit("Użytkownik zamknął program.")
 
     def selected_radiobutton():
         if document_type.get() == "Invoice" or document_type.get() == "WB":
