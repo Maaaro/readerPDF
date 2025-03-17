@@ -38,7 +38,7 @@ def add_comment(excelpath: str, sheetname: str, status_invoice_list: list, filep
             return "data not found"
     except:
         return "file not found"
-    create_file("C:/Users/m.mrowka/PycharmProjects/readerPDF/resource/tmp/temporary_page_content.txt", str(status_invoice_list))
+
     df = df.sort_values("Lp", ascending=True)
     df = df.assign(**{"Komentarz do " + fileprefix: status_invoice_list})
     with pd.ExcelWriter(excelpath, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
