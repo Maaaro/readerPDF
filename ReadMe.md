@@ -45,7 +45,7 @@ User story #2:
   i tam też mogą być pliki które nie są pdf, więc program powinien nie patrzeć na nie .pdf.
 
 Potencjalna implementacja:
-- jeśli tryb pracy to "faktury", to program ogranicza wyszukiwania spraw
+- jeśli tryb pracy zostanie ograniczony "tak", to program ogranicza wyszukiwania spraw
 - te faktury z listy spraw, mają być przekopiowane z source do target
   Jeśli znaleziono fakturę `source/Dokument_F_000895_23_RO.pdf` z numerem bankowym `54`, to ma stworzyć plik `target/54.pdf`
   Jeśli znaleziono kilka, to wtedy `target/54-1.pdf`
