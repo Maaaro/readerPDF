@@ -23,5 +23,13 @@ def test_for_multiple_invoices_saves_file_with_case_prefix_and_suffix():
         'fixture/multiple_invoices/eic_155687424_copy.pdf': 'output/42-2.pdf',
     }
 
-def test_search_by_directory():
-    pass
+def test_search_in_subfolder_with_name_of_workflow_number():
+    files_to_move = which_files_to_move(
+        cases=[Case('eIC155687424', '420', "wf1")],
+        mode=SearchMode.BY_WORKFLOW_NUMBER,
+        source='fixture/with_wf_number',
+        target='output/')
+    assert files_to_move == {
+        'fixture/with_wf_number/wf1/eic_155687424.pdf': 'output/420.pdf'
+    }
+
