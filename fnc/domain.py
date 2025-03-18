@@ -14,7 +14,6 @@ def which_files_to_move(cases: list[Case],
                         target: str) -> dict[str, str]:
     files_to_move = {}
 
-
     for case in cases:
 
         if mode == SearchMode.BY_WORKFLOW_NUMBER:
@@ -24,7 +23,6 @@ def which_files_to_move(cases: list[Case],
             modified_source = source
 
         found_invoices = find_invoices(modified_source, invoiceNumber=case.providerInvoiceNumber)
-
 
         if len(found_invoices) == 0:
             pass
@@ -45,4 +43,3 @@ def which_files_to_move(cases: list[Case],
 
 def make_source_path(source: str, file: str):
     return os.path.join(source, file).replace('\\', '/')
-
