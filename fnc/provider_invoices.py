@@ -5,12 +5,21 @@ import pymupdf
 def find_invoices(sourcePath: str, invoiceNumber: str) -> list[str]:
     if is_dir_empty(sourcePath):
         raise Exception('Provider invoice directory is empty.')
+    if not is_there_any_pdf_files(sourcePath):
+        raise Exception('Provider invoice directory does not contain invoices.')
     found_invoices = []
     for file in directory_files(sourcePath):
         content = read_pdf_content(os.path.join(sourcePath, file))
         if invoiceNumber in content:
             found_invoices.append(file)
     return found_invoices
+
+def is_there_any_pdf_files(path: str) -> bool:
+    for root, subFolders, filenames in os.walk(path):
+        for filename in filenames:
+            if filename.endswith(".pdf"):
+                return True
+    return False
 
 def read_pdf_content(pdf_path: str) -> str:
     with pymupdf.open(pdf_path) as pdf_file:
