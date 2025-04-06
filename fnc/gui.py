@@ -39,16 +39,16 @@ class Layout(ttk.Frame):
         self.output_dir = tk.StringVar()
         self.excelpath = tk.StringVar()
         self.document_type = tk.StringVar()
+        self.search_option = tk.StringVar()
+        self.search_option.set("Full search")
 
         self.instruction = ttk.Label(self, text=text)
 
-        self.search_option1 = ttk.Radiobutton(self, text="Szukaj faktur", variable=self.document_type, value="Invoice")
-        self.search_option2 = ttk.Radiobutton(self, text="Szukaj wyciągów bankowych", variable=self.document_type,
-                                              value="WB")
+        self.search_option_status = ttk.Checkbutton(self, text="Ogranicz wyszukiwanie", variable=self.search_option, onvalue="Limited search", offvalue="Full search")
 
         self.invoices_folder_entry = ttk.Entry(self, textvariable=self.invoices_folder)
-        self.output_dir_entry = ttk.Entry(self, textvariable=self.output_dir, state="disable")
-        self.excelpath_entry = ttk.Entry(self, textvariable=self.excelpath, state="disable")
+        self.output_dir_entry = ttk.Entry(self, textvariable=self.output_dir)
+        self.excelpath_entry = ttk.Entry(self, textvariable=self.excelpath)
 
         self.invoice_dir_input_button = ttk.Button(self, text="Podaj folder z fakturami / WB")
         self.invoice_output_dir_button = ttk.Button(self, text="Podaj folder docelowy")
@@ -59,23 +59,21 @@ class Layout(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=0, minsize=100)
         self.columnconfigure(2, weight=0, minsize=100)
-        self.columnconfigure(3, weight=0, minsize=100)
         self.rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
 
     def place_widgets(self):
         self.instruction.grid(column=0, row=0, sticky="W", columnspan=2, padx=5, pady=5)
-        self.search_option1.grid(column=1, row=1, sticky="NSEW", padx=10, pady=10)
-        self.search_option2.grid(column=2, row=1, sticky="W")
+        self.search_option_status.grid(column=1, row=1, sticky="W", padx=10, pady=10)
         self.invoices_folder_entry.grid(column=0, row=2, sticky="NSEW", padx=5, pady=5)
         self.output_dir_entry.grid(column=0, row=3, sticky="NSEW", padx=5, pady=5)
         self.excelpath_entry.grid(column=0, row=4, sticky="NSEW", padx=5, pady=5)
         self.invoice_dir_input_button.grid(column=1, row=2, sticky="W", padx=5, pady=5)
         self.invoice_output_dir_button.grid(column=1, row=3, sticky="W", padx=5, pady=5)
         self.excel_filename_button.grid(column=1, row=4, sticky="W", padx=5, pady=5)
-        self.initiate_program_button.grid(column=0, row=7, sticky="NS", padx=10, pady=10)
+        self.initiate_program_button.grid(column=2, row=7, sticky="NS", padx=10, pady=10)
 
     def click(self):
-        if self.document_type.get() == 'Szukaj faktury':
+        if self.search_option.get() == 'Full search':
             mode = SearchMode.FULL
         else:
             mode = SearchMode.LIMITED
