@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from typing import Callable
 
 from fnc.ui import SearchMode, SearchRequest
@@ -78,12 +78,28 @@ class Layout(ttk.Frame):
         else:
             mode = SearchMode.LIMITED
 
-        request = SearchRequest(
-            mode,
-            self.invoices_folder.get(),
-            'fake other',
-            'fake excel')
-        self.powiadamiacz(request)
+        empty_field_exist = self.check_empty_values()
+
+        if empty_field_exist == "":
+            request = SearchRequest(
+                mode,
+                self.invoices_folder.get(),
+                self.output_dir.get(),
+                self.excelpath.get()
+            )
+            self.powiadamiacz(request)
+        else:
+            messagebox.showinfo(master=self, title="Uwaga", message=empty_field_exist)
+
+    def check_empty_values(self) -> str:
+        message = ""
+        if self.invoices_folder.get() == "":
+            message = "Nie wskazano folderu z fakturami / wyciągami bankowymi" + "\n"
+        if self.output_dir.get() == "":
+            message = message + "Nie wskazano ściezki folderu docelowego" + "\n"
+        if self.excelpath.get() == "":
+            message = message + "Nie wskazano ściezki do pliku excel" + "\n"
+        return message
 
 def old_gui():
     root = tk.Tk()
