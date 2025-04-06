@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from typing import Callable
 
 from fnc.ui import SearchMode, SearchRequest
@@ -44,15 +44,19 @@ class Layout(ttk.Frame):
 
         self.instruction = ttk.Label(self, text=text)
 
-        self.search_option_status = ttk.Checkbutton(self, text="Ogranicz wyszukiwanie", variable=self.search_option, onvalue="Limited search", offvalue="Full search")
+        self.search_option_status = ttk.Checkbutton(self, text="Ogranicz wyszukiwanie", variable=self.search_option,
+                                                    onvalue="Limited search", offvalue="Full search")
 
         self.invoices_folder_entry = ttk.Entry(self, textvariable=self.invoices_folder)
         self.output_dir_entry = ttk.Entry(self, textvariable=self.output_dir)
         self.excelpath_entry = ttk.Entry(self, textvariable=self.excelpath)
 
-        self.invoice_dir_input_button = ttk.Button(self, text="Podaj folder z fakturami / WB")
-        self.invoice_output_dir_button = ttk.Button(self, text="Podaj folder docelowy")
-        self.excel_filename_button = ttk.Button(self, text="Podaj plik Ecxel")
+        self.invoice_dir_input_button = ttk.Button(self, text="Podaj folder z fakturami / WB",
+                                                   command=lambda: self.search_for_directory("INVOICE_DIR"))
+        self.invoice_output_dir_button = ttk.Button(self, text="Podaj folder docelowy",
+                                                    command=lambda: self.search_for_directory("OUTPUT_DIR"))
+        self.excel_filename_button = ttk.Button(self, text="Podaj plik Ecxel",
+                                                command=lambda: self.search_for_directory("EXCEL_DIR"))
         self.initiate_program_button = ttk.Button(self, text="Przenieś", command=self.click)
 
     def create_grid(self):
@@ -100,6 +104,23 @@ class Layout(ttk.Frame):
         if self.excelpath.get() == "":
             message = message + "Nie wskazano ściezki do pliku excel" + "\n"
         return message
+
+    def search_for_directory(self, option: str):
+        if option == "INVOICE_DIR":
+            folder_path_string = filedialog.askdirectory()
+            if folder_path_string:
+                path = str(folder_path_string)
+                self.invoices_folder.set(path)
+        elif option == "OUTPUT_DIR":
+            folder_path_string = filedialog.askdirectory()
+            if folder_path_string:
+                path = str(folder_path_string)
+                self.output_dir.set(path)
+        elif option == "EXCEL_DIR":
+            folder_path_string = filedialog.askopenfilename()
+            if folder_path_string:
+                path = str(folder_path_string)
+                self.excelpath.set(path)
 
 def old_gui():
     root = tk.Tk()
