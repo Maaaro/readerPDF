@@ -4,17 +4,17 @@ from enum import Enum
 from fnc.case import Case
 from fnc.provider_invoices import find_invoices
 
-class SearchMode(Enum):
+class InvoiceSearchMode(Enum):
     FULL = 1
     BY_WORKFLOW_NUMBER = 2
 
 def which_files_to_move(cases: list[Case],
-                        mode: SearchMode,
+                        mode: InvoiceSearchMode,
                         source: str,
                         target: str) -> dict[str, str]:
     files_to_move = {}
     for case in cases:
-        if mode == SearchMode.BY_WORKFLOW_NUMBER:
+        if mode == InvoiceSearchMode.BY_WORKFLOW_NUMBER:
             modified_source = os.path.join(source, case.workflowNumber)
         else:
             modified_source = source
