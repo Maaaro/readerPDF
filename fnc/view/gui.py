@@ -56,7 +56,7 @@ class GraphicalUserInterface:
                ' - "WF" - numer sprawy w WorkFlow - do ograniczenia wyszukiwania (dotyczy tylko fv).'
 
         top_label = tk.Label(main_frame, justify='left', text=text)
-        top_label.grid(row=0, column=0, columnspan=3, pady=(0, 10))
+        top_label.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 10))
 
         row_index = 1
         for i in range(3):
