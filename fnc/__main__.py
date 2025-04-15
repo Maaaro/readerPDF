@@ -1,4 +1,7 @@
-from fnc.view.values import SearchRequest
+from fnc.case import read_input_cases
+from fnc.domain import which_files_to_move, InvoiceSearchMode
+
+from fnc.view.values import SearchRequest, LimitedSearch
 from fnc.view.view import View
 
 def zostalem_powiadomiony(request: SearchRequest):
@@ -8,6 +11,14 @@ def zostalem_powiadomiony(request: SearchRequest):
     print("Docelowy: " + request.target_folder)
     print("Ścieżka excela: " + request.excel_path)
     print("Syrcz mołd: " + str(request.limited_search))
+
+    list_of_cases = read_input_cases(request.excel_path)
+    if request.limited_search == LimitedSearch.LIMITED:
+        mold = InvoiceSearchMode.BY_WORKFLOW_NUMBER
+    else:
+        mold = InvoiceSearchMode.FULL
+
+    which_files_to_move(list_of_cases, mold, request.invoice_folder, request.target_folder)
 
 if __name__ == '__main__':
     view = View(zostalem_powiadomiony)
