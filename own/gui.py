@@ -1,4 +1,3 @@
-import sys
 import tkinter as tk
 import time
 import pandas as pd
@@ -10,9 +9,9 @@ from own.copy_pdf import copy_pdf_file
 
 
 def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix: str):
-    global progress_window
+    #global progress_window
     if invoice_folder == "" or output_dir == "" or excelpath == "" or fileprefix == "":
-        return gui_meseges(0, 0, 0)
+        return gui_meseges(0, 0)
     else:
         list_of_invoices = get_invoices(excelpath)
         list_of_newfilenames = get_new_filenames(excelpath, fileprefix)
@@ -20,12 +19,12 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
 
         files_exist_in_sourcepath = pdf_files(invoice_folder)
         if len(files_exist_in_sourcepath) == 0:
-            gui_meseges(6, 0, 0)
+            gui_meseges(6, 0)
 
         error_comment_invoice_list = ["malformed pdf file", "empty invoice number", "no file found"]
         index = 0
 
-        progress_bar, progress_window = show_progressbar(len(list_of_invoices))
+        #progress_bar, progress_window = show_progressbar(len(list_of_invoices))
 
         status_invoice_list = []
         for (invoice, newfilename, wf_number) in zip(list_of_invoices, list_of_newfilenames, wf_cases):
@@ -43,7 +42,7 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
             items_invoice_found = len(invoice_found)
             if items_invoice_found == 0 or 'no file found' in invoice_found:
                 status_invoice_list.append("no file found")
-                update_progressbar(progress_bar, progress_window)
+                #update_progressbar(progress_bar, progress_window)
                 continue
             else:
                 status_multiple_invoice_list = ""
@@ -61,28 +60,28 @@ def move_files(invoice_folder: str, output_dir: str, excelpath: str, fileprefix:
                             copy_pdf_file(invoice_folder, match, output_dir, newfilename_with_number)
                 status_invoice_list.append(status_multiple_invoice_list)
 
-            update_progressbar(progress_bar, progress_window)
+           # update_progressbar(progress_bar, progress_window)
 
             index = index + 1
 
         add_comment(excelpath, "Sheet1", status_invoice_list, fileprefix)
 
         # progress_window.destroy()
-        destroy_progressbar(progress_window)
+        #destroy_progressbar(progress_window)
 
         if "OK" in status_invoice_list:
-            gui_meseges(1, status_invoice_list.count("OK"), len(list_of_invoices))
+            gui_meseges(1, status_invoice_list.count("OK"))
         else:
-            gui_meseges(5, 0, 0)
+            gui_meseges(5, 0)
 
 
-def gui_meseges(message: int, file_count: int, all_invoices_to_find: int):
+def gui_meseges(message: int, file_count: int):
     if message == 0:
         messagebox.showwarning(title="KOMUNIKAT",
                                message="Należy wypełnić wszystkie pola aby program działał poprawnie.")
     elif message == 1:
         messagebox.showinfo(title="KOMUNIKAT",
-                            message=f"Dopasowano {file_count} z {all_invoices_to_find} numerów faktur")
+                            message=f"Znaleziono i przeniesiono {file_count} dokumentów")
     elif message == 2:
         messagebox.showwarning(title="KOMUNIKAT",
                                message="Nie udało się pobrać listy z nazwami spraw w WF.")
@@ -98,8 +97,7 @@ def gui_meseges(message: int, file_count: int, all_invoices_to_find: int):
     elif message == 6:
         messagebox.showwarning(title="KOMUNIKAT",
                                message="Folder źródłowy jest pusty.")
-
-    destroy_progressbar(progress_window)
+    #destroy_progressbar(progress_window)
 
 
 def destroy_progressbar(progress_window):
@@ -133,7 +131,7 @@ def get_wf_cases(excelpath: str):
     try:
         wf_cases = list_of_WF_case(excelpath, "Sheet1", "WF")
     except:
-        return gui_meseges(2, 0, 0)
+        return gui_meseges(2, 0)
     return wf_cases
 
 
@@ -141,7 +139,7 @@ def get_new_filenames(excelpath: str, fileprefix: str):
     try:
         list_of_newfilenames = new_filenames(excelpath, "Sheet1", "Lp", fileprefix)
     except:
-        return gui_meseges(3, 0, 0)
+        return gui_meseges(3, 0)
 
     return list_of_newfilenames
 
@@ -151,7 +149,7 @@ def get_invoices(excelpath: str):
         list_of_invoices = invoice_numbers(excelpath, "Sheet1",
                                            "Nr fv")
     except:
-        return gui_meseges(4, 0, 0)
+        return gui_meseges(4, 0)
 
     return list_of_invoices
 
@@ -214,18 +212,15 @@ def gui():
                                                                                              padx=5, pady=5)
     ttk.Button(frame, text="Przenieś",
                command=lambda: selected_radiobutton()).grid(column=2, row=7, sticky="NS", padx=10, pady=10)
-    ttk.Button(frame, text="Zamknij program", command=lambda: exit_program()).grid(column=3, row=7, sticky="W", padx=10,
-                                                                                   pady=10)
+    ttk.Button(frame, text="Zamknij program", command=root.destroy).grid(column=3, row=7, sticky="W", padx=10, pady=10)
 
     document_type = StringVar()
     ttk.Radiobutton(frame, text="Szukaj faktur", variable=document_type, value="Invoice").grid(column=2, row=1,
                                                                                                sticky="NSEW", padx=10,
                                                                                                pady=10)
     ttk.Radiobutton(frame, text="Szukaj wyciągów bankowych", variable=document_type, value="WB").grid(column=3, row=1,
-                                                                                                      sticky="W",padx = 10, pady = 10)
-
-    def exit_program():
-        sys.exit("Użytkownik zamknął program.")
+                                                                                                      sticky="W",
+                                                                                                      padx=10, pady=10)
 
     def selected_radiobutton():
         if document_type.get() == "Invoice" or document_type.get() == "WB":
