@@ -2,6 +2,7 @@ import os
 
 import pymupdf
 
+
 def find_invoices(sourcePath: str, invoiceNumber: str) -> list[str]:
     if is_dir_empty(sourcePath):
         raise Exception('Provider invoice directory is empty.')
@@ -14,12 +15,14 @@ def find_invoices(sourcePath: str, invoiceNumber: str) -> list[str]:
             found_invoices.append(file)
     return found_invoices
 
+
 def is_there_any_pdf_files(path: str) -> bool:
     for root, subFolders, filenames in os.walk(path):
         for filename in filenames:
             if filename.endswith(".pdf"):
                 return True
     return False
+
 
 def read_pdf_content(pdf_path: str) -> str:
     with pymupdf.open(pdf_path) as pdf_file:
@@ -28,12 +31,28 @@ def read_pdf_content(pdf_path: str) -> str:
             content += page.get_text().strip()
         return content
 
+
 def directory_files(path: str) -> list[str]:
     files = []
     for root, subFolders, filenames in os.walk(path):
         for file in filenames:
-            files.append(file)
+            files.append(directory_file(path, root, file))
     return files
+
+
+def directory_file(path: str, root: str, file: str) -> str:
+    if has_subfolder(path, root):
+        return subfolder(path, root) + "/" + file
+    return file
+
+
+def subfolder(path: str, root: str) -> str:
+    return root.removeprefix(path).replace("\\", "")
+
+
+def has_subfolder(path: str, root: str) -> bool:
+    return path != root
+
 
 def is_dir_empty(path: str) -> bool:
     return len(os.listdir(path)) == 0
