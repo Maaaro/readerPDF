@@ -3,6 +3,8 @@ from fnc.domain import which_files_to_move, InvoiceSearchMode
 
 from fnc.view.values import SearchRequest, LimitedSearch
 from fnc.view.view import View
+from test.copy_files.move_files import copy_found_invoices_to_target_dir
+
 
 def zostalem_powiadomiony(request: SearchRequest):
     print("----")
@@ -18,7 +20,12 @@ def zostalem_powiadomiony(request: SearchRequest):
     else:
         mold = InvoiceSearchMode.FULL
 
-    which_files_to_move(list_of_cases, mold, request.invoice_folder, request.target_folder)
+    x = which_files_to_move(list_of_cases, mold, request.invoice_folder, request.target_folder)
+    y = copy_found_invoices_to_target_dir(x)
+
+    print(x)
+    print(y)
+
 
 if __name__ == '__main__':
     view = View(zostalem_powiadomiony)

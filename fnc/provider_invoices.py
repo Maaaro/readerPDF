@@ -36,18 +36,24 @@ def directory_files(path: str) -> list[str]:
     files = []
     for root, subFolders, filenames in os.walk(path):
         for file in filenames:
-            files.append(directory_file(path, root, file))
+            if file.endswith(".pdf"):
+                files.append(directory_file(path, root, file))
     return files
 
 
 def directory_file(path: str, root: str, file: str) -> str:
-    if has_subfolder(path, root):
-        return subfolder(path, root) + "/" + file
-    return file
+    path_rep = path.replace("\\", "/")
+    root_rep = root.replace("\\", "/")
+    file_rep = file.replace("\\", "/")
+    if has_subfolder(path_rep, root_rep):
+        return root_rep + "/" + file_rep
+    return path_rep + "/" + file_rep
 
 
 def subfolder(path: str, root: str) -> str:
-    return root.removeprefix(path).replace("\\", "")
+    x = root.removeprefix(path).replace("\\", "/")
+    # unUsed
+    return x
 
 
 def has_subfolder(path: str, root: str) -> bool:
