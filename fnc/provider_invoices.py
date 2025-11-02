@@ -3,7 +3,8 @@ import time
 
 import pymupdf
 
-def find_invoices(sourcePath: str, invoiceNumber: str) -> tuple[list[str], list[str]]:
+
+def find_invoices(sourcePath: str, invoiceNumber: str) -> list[str]:
     start = time.time()
     if is_dir_empty(sourcePath):
         raise Exception('Provider invoice directory is empty.')
@@ -17,9 +18,23 @@ def find_invoices(sourcePath: str, invoiceNumber: str) -> tuple[list[str], list[
             found_invoices.append(file)
             comments.append(invoiceNumber)
     end = time.time()
-    result = round(end - start,2)
-    print ("Result: ", result)
-    return found_invoices, comments
+    result = round(end - start, 2)
+    print("Result: ", result)
+    save_comments(comments)
+    return found_invoices
+
+
+def save_comments(comments: list[str]) -> None:
+    with open("comments.txt", "w") as f:
+        for s in comments:
+            f.write(s + "\n")
+
+
+def open_comments(filename: str) -> list[str]:
+    with open(filename, "r") as f:
+        list_of_comments = [line.strip("\n") for line in f]
+
+    return list_of_comments
 
 
 def is_there_any_pdf_files(path: str) -> bool:
