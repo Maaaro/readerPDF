@@ -1,8 +1,10 @@
 import os
+import time
 
 import pymupdf
 
 def find_invoices(sourcePath: str, invoiceNumber: str) -> tuple[list[str], list[str]]:
+    start = time.time()
     if is_dir_empty(sourcePath):
         raise Exception('Provider invoice directory is empty.')
     if not is_there_any_pdf_files(sourcePath):
@@ -14,6 +16,9 @@ def find_invoices(sourcePath: str, invoiceNumber: str) -> tuple[list[str], list[
         if invoiceNumber in content:
             found_invoices.append(file)
             comments.append(invoiceNumber)
+    end = time.time()
+    result = round(end - start,2)
+    print ("Result: ", result)
     return found_invoices, comments
 
 
