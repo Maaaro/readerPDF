@@ -2,18 +2,19 @@ import os
 
 import pymupdf
 
-
-def find_invoices(sourcePath: str, invoiceNumber: str) -> list[str]:
+def find_invoices(sourcePath: str, invoiceNumber: str) -> tuple[list[str], list[str]]:
     if is_dir_empty(sourcePath):
         raise Exception('Provider invoice directory is empty.')
     if not is_there_any_pdf_files(sourcePath):
         raise Exception('Provider invoice directory does not contain invoices.')
     found_invoices = []
+    comments = []
     for file in directory_files(sourcePath):
         content = read_pdf_content(os.path.join(sourcePath, file))
         if invoiceNumber in content:
             found_invoices.append(file)
-    return found_invoices
+            comments.append(invoiceNumber)
+    return found_invoices, comments
 
 
 def is_there_any_pdf_files(path: str) -> bool:

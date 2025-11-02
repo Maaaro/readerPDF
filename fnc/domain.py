@@ -20,7 +20,7 @@ def which_files_to_move(cases: list[Case],
             modified_source = os.path.join(source, case.workflowNumber).replace("\\", "/")
         else:
             modified_source = source
-        found_invoices = find_invoices(modified_source, invoiceNumber=case.providerInvoiceNumber)
+        found_invoices, excel_comments = find_invoices(modified_source, invoiceNumber=case.providerInvoiceNumber)
         if len(found_invoices) == 0:
             pass
         else:
