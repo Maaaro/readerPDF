@@ -1,9 +1,10 @@
+import shutil
+
 from fnc.case import read_input_cases
 from fnc.domain import which_files_to_move, InvoiceSearchMode
 
 from fnc.view.values import SearchRequest, LimitedSearch
 from fnc.view.view import View
-from test.copy_files.test_move_files import copy_found_invoices_to_target_dir
 
 
 def zostalem_powiadomiony(request: SearchRequest):
@@ -30,3 +31,8 @@ def zostalem_powiadomiony(request: SearchRequest):
 if __name__ == '__main__':
     view = View(zostalem_powiadomiony)
     view.show_window()
+
+
+def copy_found_invoices_to_target_dir(files_to_move: dict[str, str]) -> None:
+    for key, value in files_to_move.items():
+        shutil.copy2(key, value)

@@ -1,10 +1,6 @@
 import os
-import shutil
 
-
-def copy_found_invoices_to_target_dir(files_to_move: dict[str, str]) -> None:
-    for key, value in files_to_move.items():
-        shutil.copy2(key, value)
+from fnc.__main__ import copy_found_invoices_to_target_dir
 
 
 def create_file(my_file_path: str, text_of_my_file: str) -> None:
@@ -50,7 +46,7 @@ def test_copy_two_file() -> None:
     delete_if_exist(my_file2)
     create_file(my_file1, text1)
     create_file(my_file2, text2)
-    copy_found_invoices_to_target_dir({my_file1: output_dir, my_file2: output_dir })
+    copy_found_invoices_to_target_dir({my_file1: output_dir, my_file2: output_dir})
     result1 = check_if_file_exist(my_file1)
     result2 = check_if_file_exist(my_file2)
     assert result1 == True and result2 == True
