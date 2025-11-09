@@ -29,10 +29,5 @@ def which_files_to_move(cases: list[Case],
             files_to_move[source_path] = target_path
     return files_to_move
 
-def make_source_path(source: str, file: str):
-    pdf_path = os.path.join(source, file)
-    if os.sep == "/":
-        pdf_path = pdf_path.replace("\\", "/")
-    else:
-        pdf_path = pdf_path.replace("\\", "/")
-    return pdf_path
+def make_source_path(source: str, file: str) -> str:
+    return os.path.join(source, file).replace("\\", "/")
