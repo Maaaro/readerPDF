@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from typing import Optional
 
 import pandas as pd
-from pandas.core.interchange.dataframe_protocol import DataFrame
+from openpyxl import load_workbook
+from pandas import DataFrame
 
 
 @dataclass
@@ -40,14 +41,29 @@ def get_cell_optional(row: pd.Series, column: str) -> Optional[str]:
     return row[column]
 
 
-def merge_df_with_found_invoices(main_df: DataFrame, found_invoices: list[str]) -> DataFrame:
+def update_excel_df(main_df: DataFrame, found_invoices: list[str], excel_path: str) -> None:
+    if "Comments" in main_df.columns:
+        main_df = main_df.drop(columns="Comments")
+    df = merge_df_with_found_invoices(found_invoices, main_df)
+
+    try:
+        wb = load_workbook(excel_path)
+        sheet_name = wb.sheetnames[0]
+    except:
+        sheet_name = "Sheet1"
+
+    df.to_excel(excel_path, sheet_name=sheet_name, engine="openpyxl", index=False)
+
+
+def merge_df_with_found_invoices(found_invoices: list[str], main_df: DataFrame) -> DataFrame:
     found_invoices_df = change_list_to_df(found_invoices)
-    inner_join = pd.merge(main_df, found_invoices_df[["invoice_number", "comment"]], left_on="test",
-                          right_on="invoice_number", how="left").drop(columns="invoice_number")
+    inner_join = pd.merge(main_df, found_invoices_df[["invoice_number", "Comments"]], left_on="Nr fv",
+                          right_on="invoice_number",
+                          how="left").drop(columns="invoice_number")
     return inner_join
 
 
 def change_list_to_df(found_invoices: list[str]) -> DataFrame:
     found_invoices_df = pd.DataFrame(found_invoices, columns=["invoice_number"])
-    found_invoices_df["comment"] = "File was find"
+    found_invoices_df["Comments"] = "File was found"
     return found_invoices_df

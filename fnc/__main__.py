@@ -1,4 +1,4 @@
-from fnc.case import read_input_cases, merge_df_with_found_invoices
+from fnc.case import read_input_cases, update_excel_df
 from fnc.domain import which_files_to_move, InvoiceSearchMode
 
 from fnc.view.values import SearchRequest, LimitedSearch
@@ -23,8 +23,10 @@ def zostalem_powiadomiony(request: SearchRequest):
     files_to_move, invoices_found = which_files_to_move(list_of_cases, mold, request.invoice_folder,
                                                         request.target_folder)
     y = copy_found_invoices_to_target_dir(files_to_move)
-    'nadpisz plik excel'
-    table = merge_df_with_found_invoices(excel_df, invoices_found)
+
+    table = update_excel_df(excel_df, invoices_found, request.excel_path)
+
+    print("Program ma problem z wyszukiwaniem. przykład. Nr fv = 1234 - nie znajdzie. nr fv = '1234' - znajdzie")
 
     print(files_to_move)
     print(invoices_found)
