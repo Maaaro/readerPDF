@@ -11,6 +11,7 @@ class Case:
     filePrefix: str
     workflowNumber: Optional[str]
 
+
 def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
     cases = []
     try:
@@ -25,13 +26,28 @@ def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
         cases.append(convert_row_to_case(row_cells))
     return cases, df
 
+
 def convert_row_to_case(row: pd.Series) -> Case:
     return Case(
         providerInvoiceNumber=str(row['Nr fv']),
         filePrefix=str(row['Lp']),
         workflowNumber=get_cell_optional(row, 'WF'))
 
+
 def get_cell_optional(row: pd.Series, column: str) -> Optional[str]:
     if pd.isna(row[column]):
         return None
     return row[column]
+
+
+def merge_df_with_found_invoices(main_df: DataFrame, found_invoices: list[str]) -> DataFrame:
+    found_invoices_df = change_list_to_df(found_invoices)
+    inner_join = pd.merge(main_df, found_invoices_df[["invoice_number", "comment"]], left_on="test",
+                          right_on="invoice_number", how="left").drop(columns="invoice_number")
+    return inner_join
+
+
+def change_list_to_df(found_invoices: list[str]) -> DataFrame:
+    found_invoices_df = pd.DataFrame(found_invoices, columns=["invoice_number"])
+    found_invoices_df["comment"] = "File was find"
+    return found_invoices_df

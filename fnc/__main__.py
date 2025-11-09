@@ -1,4 +1,4 @@
-from fnc.case import read_input_cases
+from fnc.case import read_input_cases, merge_df_with_found_invoices
 from fnc.domain import which_files_to_move, InvoiceSearchMode
 
 from fnc.view.values import SearchRequest, LimitedSearch
@@ -24,11 +24,12 @@ def zostalem_powiadomiony(request: SearchRequest):
                                                         request.target_folder)
     y = copy_found_invoices_to_target_dir(files_to_move)
     'nadpisz plik excel'
-
+    table = merge_df_with_found_invoices(excel_df, invoices_found)
 
     print(files_to_move)
     print(invoices_found)
     print(y)
+    print(table)
 
 
 if __name__ == '__main__':
