@@ -15,6 +15,7 @@ def which_files_to_move(cases: list[Case],
                         source: str,
                         target: str) -> dict[str, str]:
     files_to_move = {}
+    list_of_comments = []
     for case in cases:
         if mode == InvoiceSearchMode.BY_WORKFLOW_NUMBER:
             modified_source = os.path.join(source, case.workflowNumber).replace("\\", "/")
@@ -32,8 +33,14 @@ def which_files_to_move(cases: list[Case],
                 source_path = make_source_path(modified_source, invoice_file)
                 target_path = make_source_path(target, (case.filePrefix + suffix + '.pdf'))
                 files_to_move[source_path] = target_path
+                list_of_comments.append(case.providerInvoiceNumber)
+    save_comments(list_of_comments)
     return files_to_move
 
+def save_comments(comments: list[str]) -> None:
+    with open("comments.txt", "w") as f:
+        for s in comments:
+            f.write(s + "\n")
 
 def make_source_path(source: str, file: str):
     pdf_path = os.path.join(source, file)

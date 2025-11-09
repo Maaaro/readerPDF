@@ -11,30 +11,14 @@ def find_invoices(sourcePath: str, invoiceNumber: str) -> list[str]:
     if not is_there_any_pdf_files(sourcePath):
         raise Exception('Provider invoice directory does not contain invoices.')
     found_invoices = []
-    comments = []
     for file in directory_files(sourcePath):
         content = read_pdf_content(os.path.join(sourcePath, file))
         if invoiceNumber in content:
             found_invoices.append(file)
-            comments.append(invoiceNumber)
     end = time.time()
     result = round(end - start, 2)
     print("Result: ", result)
-    save_comments(comments)
     return found_invoices
-
-
-def save_comments(comments: list[str]) -> None:
-    with open("comments.txt", "w") as f:
-        for s in comments:
-            f.write(s + "\n")
-
-
-def open_comments(filename: str) -> list[str]:
-    with open(filename, "r") as f:
-        list_of_comments = [line.strip("\n") for line in f]
-
-    return list_of_comments
 
 
 def is_there_any_pdf_files(path: str) -> bool:

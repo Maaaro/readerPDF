@@ -2,7 +2,6 @@ import shutil
 
 from fnc.case import read_input_cases
 from fnc.domain import which_files_to_move, InvoiceSearchMode
-
 from fnc.view.values import SearchRequest, LimitedSearch
 from fnc.view.view import View
 
@@ -22,12 +21,17 @@ def zostalem_powiadomiony(request: SearchRequest):
         mold = InvoiceSearchMode.FULL
 
     x = which_files_to_move(list_of_cases, mold, request.invoice_folder, request.target_folder)
-    y = copy_found_invoices_to_target_dir(x)
+    copy_found_invoices_to_target_dir(x)
+    z = open_comments("comments.txt")
 
     print(x)
-    print(y)
+    print(z)
 
+def open_comments(filename: str) -> list[str]:
+    with open(filename, "r") as f:
+        list_of_comments = [line.strip("\n") for line in f]
 
+    return list_of_comments
 if __name__ == '__main__':
     view = View(zostalem_powiadomiony)
     view.show_window()
