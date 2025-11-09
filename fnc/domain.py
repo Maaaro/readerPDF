@@ -4,11 +4,9 @@ from enum import Enum
 from fnc.case import Case
 from fnc.provider_invoices import find_invoices
 
-
 class InvoiceSearchMode(Enum):
     FULL = 1
     BY_WORKFLOW_NUMBER = 2
-
 
 def which_files_to_move(cases: list[Case],
                         mode: InvoiceSearchMode,
@@ -21,25 +19,20 @@ def which_files_to_move(cases: list[Case],
         else:
             modified_source = source
         found_invoices, excel_comments_list = find_invoices(modified_source, invoiceNumber=case.providerInvoiceNumber)
-        if len(found_invoices) == 0:
-            pass
-        else:
-            distinct_excel_comments_list = list(set(excel_comments_list))
-            for index, invoice_file in enumerate(found_invoices):
-                if len(found_invoices) > 1:
-                    suffix = '-' + str(index + 1)
-                else:
-                    suffix = ''
-                source_path = make_source_path(modified_source, invoice_file)
-                target_path =make_source_path(target, (case.filePrefix + suffix + '.pdf'))
-                files_to_move[source_path] = target_path
+        for index, invoice_file in enumerate(found_invoices):
+            if len(found_invoices) > 1:
+                suffix = '-' + str(index + 1)
+            else:
+                suffix = ''
+            source_path = make_source_path(modified_source, invoice_file)
+            target_path = make_source_path(target, (case.filePrefix + suffix + '.pdf'))
+            files_to_move[source_path] = target_path
     return files_to_move
 
-
 def make_source_path(source: str, file: str):
-    pdf_path=os.path.join(source, file)
+    pdf_path = os.path.join(source, file)
     if os.sep == "/":
-        pdf_path = pdf_path.replace("\\","/")
+        pdf_path = pdf_path.replace("\\", "/")
     else:
-        pdf_path = pdf_path.replace("\\","/")
+        pdf_path = pdf_path.replace("\\", "/")
     return pdf_path
