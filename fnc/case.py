@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from typing import Optional
 
 import pandas as pd
+from pandas.core.interchange.dataframe_protocol import DataFrame
+
 
 @dataclass
 class Case:
@@ -9,7 +11,7 @@ class Case:
     filePrefix: str
     workflowNumber: Optional[str]
 
-def read_input_cases(path: str) -> list[Case]:
+def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
     cases = []
     try:
         df = pd.read_excel(path, sheet_name=0, engine='openpyxl')
@@ -21,7 +23,7 @@ def read_input_cases(path: str) -> list[Case]:
         if pd.isna(row_cells['Lp']):
             raise Exception(f'Row #{row_index + 1} does not contain an LP number.')
         cases.append(convert_row_to_case(row_cells))
-    return cases
+    return cases, df
 
 def convert_row_to_case(row: pd.Series) -> Case:
     return Case(

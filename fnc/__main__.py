@@ -14,17 +14,20 @@ def zostalem_powiadomiony(request: SearchRequest):
     print("Ścieżka excela: " + request.excel_path)
     print("Syrcz mołd: " + str(request.limited_search))
 
-    list_of_cases = read_input_cases(request.excel_path)
+    list_of_cases, excel_df = read_input_cases(request.excel_path)
     if request.limited_search == LimitedSearch.LIMITED:
         mold = InvoiceSearchMode.BY_WORKFLOW_NUMBER
     else:
         mold = InvoiceSearchMode.FULL
 
-    x, z = which_files_to_move(list_of_cases, mold, request.invoice_folder, request.target_folder)
-    y = copy_found_invoices_to_target_dir(x)
+    files_to_move, invoices_found = which_files_to_move(list_of_cases, mold, request.invoice_folder,
+                                                        request.target_folder)
+    y = copy_found_invoices_to_target_dir(files_to_move)
+    'nadpisz plik excel'
 
-    print(x)
-    print(z)
+
+    print(files_to_move)
+    print(invoices_found)
     print(y)
 
 
