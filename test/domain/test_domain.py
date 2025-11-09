@@ -48,3 +48,11 @@ def test_include_invoice_number_for_found_files():
         target='output/'
     )
     assert found_case_numbers == ['eIC155687424']
+
+def test_include_invoice_number_for_found_files_for_two_files():
+    _, found_case_numbers = which_files_to_move(
+        cases=[Case('eIC155687424', '42', None)],
+        mode=InvoiceSearchMode.FULL,
+        source=project_path('domain/fixture/multiple_invoices'),
+        target='output/')
+    assert found_case_numbers == ['eIC155687424']
