@@ -20,10 +20,11 @@ def zostalem_powiadomiony(request: SearchRequest):
     else:
         mold = InvoiceSearchMode.FULL
 
-    x = which_files_to_move(list_of_cases, mold, request.invoice_folder, request.target_folder)
+    x, z = which_files_to_move(list_of_cases, mold, request.invoice_folder, request.target_folder)
     y = copy_found_invoices_to_target_dir(x)
 
     print(x)
+    print(z)
     print(y)
 
 

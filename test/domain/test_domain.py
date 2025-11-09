@@ -3,8 +3,9 @@ from fnc.case import Case
 from fnc.domain import which_files_to_move, InvoiceSearchMode
 from test.project_path import project_path
 
+
 def test_for_single_invoice_saves_invoice_only_with_case_prefix():
-    files_to_move = which_files_to_move(
+    files_to_move, _ = which_files_to_move(
         cases=[Case('eIC155687424', '420', None)],
         mode=InvoiceSearchMode.FULL,
         source=project_path('domain/fixture/single_invoice'),
@@ -13,8 +14,9 @@ def test_for_single_invoice_saves_invoice_only_with_case_prefix():
         project_path('domain/fixture/single_invoice/eic_155687424.pdf'): 'output/420.pdf'
     }
 
+
 def test_for_multiple_invoices_saves_file_with_case_prefix_and_suffix():
-    files_to_move = which_files_to_move(
+    files_to_move, _ = which_files_to_move(
         cases=[Case('eIC155687424', '42', None)],
         mode=InvoiceSearchMode.FULL,
         source=project_path('domain/fixture/multiple_invoices'),
@@ -24,8 +26,9 @@ def test_for_multiple_invoices_saves_file_with_case_prefix_and_suffix():
         project_path('domain/fixture/multiple_invoices/eic_155687424_copy.pdf'): 'output/42-2.pdf',
     }
 
+
 def test_search_in_subfolder_with_name_of_workflow_number():
-    files_to_move = which_files_to_move(
+    files_to_move, _ = which_files_to_move(
         cases=[Case('eIC155687424', '420', "wf1")],
         mode=InvoiceSearchMode.BY_WORKFLOW_NUMBER,
         source=project_path('domain/fixture/with_wf_number'),
@@ -34,8 +37,9 @@ def test_search_in_subfolder_with_name_of_workflow_number():
         project_path('domain/fixture/with_wf_number/wf1/eic_155687424.pdf'): 'output/420.pdf'
     }
 
+
 def test_include_invoice_number_for_found_files():
-    files_to_move = which_files_to_move(
+    _, found_case_numbers = which_files_to_move(
         cases=[
             Case('eIC155687424', '420', "wf1")
         ],
@@ -43,5 +47,4 @@ def test_include_invoice_number_for_found_files():
         source=project_path('domain/fixture/with_wf_number'),
         target='output/'
     )
-    assert files_to_move == {'domain/fixture/with_wf_number/wf1/eic_155687424.pdf': 'output/420.pdf'}
     assert found_case_numbers == ['eIC155687424']
