@@ -45,7 +45,7 @@ def update_excel_df(main_df: DataFrame, found_invoices: list[str], excel_path: s
     if "Comments" in main_df.columns:
         main_df = main_df.drop(columns="Comments")
     df = merge_df_with_found_invoices(found_invoices, main_df)
-
+    df = df.fillna("File wasn't found")
     try:
         wb = load_workbook(excel_path)
         sheet_name = wb.sheetnames[0]
