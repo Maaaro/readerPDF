@@ -18,7 +18,11 @@ def find_invoices(sourcePath: str, invoiceNumber: str) -> tuple[list[str], list[
             comments.append(invoiceNumber)
     end = time.time()
     result = round(end - start,2)
-    print ("Result: ", result)
+    if not comments:
+        status = "Invoice wasn't found"
+    else:
+        status = "Invoice was found"
+    print ("Looking for invoice number: ", invoiceNumber, " for ", result, " sec. ", status)
     return found_invoices, comments
 
 

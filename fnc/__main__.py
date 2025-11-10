@@ -24,14 +24,13 @@ def zostalem_powiadomiony(request: SearchRequest):
                                                         request.target_folder)
     y = copy_found_invoices_to_target_dir(files_to_move)
 
-    table = update_excel_df(excel_df, invoices_found, request.excel_path)
+    update_excel_df(excel_df, invoices_found, request.excel_path)
 
     print("Program ma problem z wyszukiwaniem. przykład. Nr fv = 1234 - nie znajdzie. nr fv = '1234' - znajdzie")
 
     print(files_to_move)
     print(invoices_found)
     print(y)
-    print(table)
 
 
 if __name__ == '__main__':
