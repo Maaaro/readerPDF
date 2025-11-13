@@ -8,6 +8,70 @@ from fnc.case import Case, read_input_cases
 from test.project_path import project_path
 
 
+def test_parse_input_cases_from_xlsx_file():
+    test_path = project_path("input_cases/fixture/inputCases.valid.xlsx")
+    df = create_complex_df()
+    create_excel_file(df, test_path)
+    input_cases, _ = read_input_cases(test_path)
+
+    assert input_cases == [
+        Case('FV/2022/08/1253/3/11034', '1', 'wf1'),
+        Case('eIC155687424', '2', 'wf2'),
+        Case('100156909563/RA/2024', '3', None),
+        Case('PL3654810710', '4', None),
+        Case('F/000895/23/RO', '5', None),
+        Case('26908/BR/2023', '6', None),
+        Case('8492', '7', 'wf7'),
+    ]
+    cleanup_test_file(test_path)
+
+
+def test_empty_invoice_number_in_any_row_is_malformed_file():
+    test_path = project_path("input_cases/fixture/inputCases.emptyInvoiceNumber.xlsx")
+    df = create_df_with_empty_Invoice_number()
+    create_excel_file(df, test_path)
+    with raises(Exception) as exception_info:
+        input_cases, _ = read_input_cases(test_path)
+    assert str(exception_info.value) == 'Row #1 does not contain an invoice number.'
+    cleanup_test_file(test_path)
+
+
+def test_empty_lp_number_in_any_row_is_malformed_file():
+    test_path = project_path("input_cases/fixture/inputCases.emptyLpNumber.xlsx")
+    df = create_df_with_empty_Lp_number()
+    create_excel_file(df, test_path)
+    with raises(Exception) as exception_info:
+        input_cases, _ = read_input_cases(test_path)
+    assert str(exception_info.value) == 'Row #1 does not contain an LP number.'
+    cleanup_test_file(test_path)
+
+
+def test_reading_a_missing_file_raises_exception():
+    with raises(Exception) as exception_info:
+        input_cases, _ = read_input_cases(project_path('input_cases/fixture/missing-file'))
+    assert str(exception_info.value) == 'Failed to open input cases file, file does not exist.'
+
+
+def create_df_with_empty_Lp_number() -> DataFrame:
+    data = {
+        "Lp": [None],
+        "Nr fv": ["FV/2025/21"],
+        "WF": ["wf1"],
+    }
+    df = pd.DataFrame(data)
+    return df
+
+
+def create_df_with_empty_Invoice_number() -> DataFrame:
+    data = {
+        "Lp": ["1"],
+        "Nr fv": [None],
+        "WF": ["wf1"],
+    }
+    df = pd.DataFrame(data)
+    return df
+
+
 def create_complex_df() -> DataFrame:
     data = {
         "Lp": ["1", "2", "3", "4", "5", "6", "7"],
@@ -33,50 +97,3 @@ def cleanup_test_file(path: Path) -> None:
     while parent_dir != Path(__file__).parent and not any(parent_dir.iterdir()):
         parent_dir.rmdir()
         parent_dir = parent_dir.parent
-
-
-def test_parse_input_cases_from_xlsx_file():
-    test_path = project_path("input_cases/fixture/inputCases.valid.xlsx")
-    df = create_complex_df()
-    create_excel_file(df, test_path)
-    input_cases, _ = read_input_cases(test_path)
-
-    assert input_cases == [
-        Case('FV/2022/08/1253/3/11034', '1', 'wf1'),
-        Case('eIC155687424', '2', 'wf2'),
-        Case('100156909563/RA/2024', '3', None),
-        Case('PL3654810710', '4', None),
-        Case('F/000895/23/RO', '5', None),
-        Case('26908/BR/2023', '6', None),
-        Case('8492', '7', 'wf7'),
-    ]
-    cleanup_test_file(test_path)
-
-
-def test_empty_invoice_number_in_any_row_is_malformed_file():
-    with raises(Exception) as exception_info:
-        input_cases, _ = read_input_cases(project_path('input_cases/fixture/inputCases.emptyInvoiceNumber.xlsx'))
-    assert str(exception_info.value) == 'Row #1 does not contain an invoice number.'
-
-
-def test_empty_lp_number_in_any_row_is_malformed_file():
-    with raises(Exception) as exception_info:
-        input_cases, _ = read_input_cases(project_path('input_cases/fixture/inputCases.emptyLpNumber.xlsx'))
-    assert str(exception_info.value) == 'Row #1 does not contain an LP number.'
-
-
-def test_reading_a_missing_file_raises_exception():
-    with raises(Exception) as exception_info:
-        input_cases, _ = read_input_cases(project_path('input_cases/fixture/missing-file'))
-    assert str(exception_info.value) == 'Failed to open input cases file, file does not exist.'
-
-
-def test_create_empty_df():
-    data = {
-        "Lp": [],
-        "Nr fv": [],
-        "WF": [],
-    }
-    df = pd.DataFrame(data)
-    # print("\n", df)
-    return df
