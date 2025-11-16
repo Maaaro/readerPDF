@@ -29,3 +29,7 @@ class View:
             self.__gui.target_directory(),
             self.__gui.excel_filename()
         ))
+
+    def finished(self):
+        self.__gui.show_message("Program zakończył działanie.")
+        pass

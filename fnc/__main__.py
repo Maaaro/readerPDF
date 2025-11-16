@@ -28,6 +28,8 @@ def zostalem_powiadomiony(request: SearchRequest):
 
     update_excel_df(excel_df, invoices_found, request.excel_path)
 
+    view.finished()
+
     print("Program ma problem z wyszukiwaniem. przykład. Nr fv = 1234 - nie znajdzie. nr fv = '1234' - znajdzie")
 
     print(files_to_move)

@@ -86,3 +86,6 @@ class GraphicalUserInterface:
         proceed_button.place(relx=1.0, rely=1.0, anchor='se', x=-10, y=-10)
 
         self.__root.mainloop()
+
+    def show_message(self, message:str):
+        tk.messagebox.showinfo(title="Status", message=message)
