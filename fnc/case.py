@@ -20,7 +20,7 @@ def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
     except FileNotFoundError:
         raise Exception('Failed to open input cases file, file does not exist.')
     for row_index, row_cells in df.iterrows():
-        if pd.isna(row_cells['Nr fv']):
+        if pd.isna(row_cells['Invoice_ID']):
             raise Exception(f'Row #{row_index + 1} does not contain an invoice number.')
         if pd.isna(row_cells['Lp']):
             raise Exception(f'Row #{row_index + 1} does not contain an LP number.')
@@ -30,7 +30,7 @@ def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
 
 def convert_row_to_case(row: pd.Series) -> Case:
     return Case(
-        providerInvoiceNumber=str(row['Nr fv']),
+        providerInvoiceNumber=str(row['Invoice_ID']),
         filePrefix=str(row['Lp']),
         workflowNumber=get_cell_optional(row, 'WF'))
 
@@ -57,7 +57,7 @@ def update_excel_df(main_df: DataFrame, found_invoices: list[str], excel_path: s
 
 def merge_df_with_found_invoices(found_invoices: list[str], main_df: DataFrame) -> DataFrame:
     found_invoices_df = change_list_to_df(found_invoices)
-    inner_join = pd.merge(main_df, found_invoices_df[["invoice_number", "Comments"]], left_on="Nr fv",
+    inner_join = pd.merge(main_df, found_invoices_df[["invoice_number", "Comments"]], left_on="Invoice_ID",
                           right_on="invoice_number",
                           how="left").drop(columns="invoice_number")
     return inner_join

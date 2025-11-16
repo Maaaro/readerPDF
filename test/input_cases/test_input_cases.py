@@ -55,7 +55,7 @@ def test_reading_a_missing_file_raises_exception():
 def create_df_with_empty_Lp_number() -> DataFrame:
     data = {
         "Lp": [None],
-        "Nr fv": ["FV/2025/21"],
+        "Invoice_ID": ["FV/2025/21"],
         "WF": ["wf1"],
     }
     df = pd.DataFrame(data)
@@ -65,7 +65,7 @@ def create_df_with_empty_Lp_number() -> DataFrame:
 def create_df_with_empty_Invoice_number() -> DataFrame:
     data = {
         "Lp": ["1"],
-        "Nr fv": [None],
+        "Invoice_ID": [None],
         "WF": ["wf1"],
     }
     df = pd.DataFrame(data)
@@ -75,7 +75,7 @@ def create_df_with_empty_Invoice_number() -> DataFrame:
 def create_complex_df() -> DataFrame:
     data = {
         "Lp": ["1", "2", "3", "4", "5", "6", "7"],
-        "Nr fv": ["FV/2022/08/1253/3/11034", "eIC155687424", "100156909563/RA/2024", "PL3654810710", "F/000895/23/RO",
+        "Invoice_ID": ["FV/2022/08/1253/3/11034", "eIC155687424", "100156909563/RA/2024", "PL3654810710", "F/000895/23/RO",
                   "26908/BR/2023", "8492"],
         "WF": ["wf1", "wf2", "", "", "", "", "wf7"],
     }
