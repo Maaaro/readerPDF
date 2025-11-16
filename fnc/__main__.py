@@ -5,7 +5,6 @@ from fnc.view.values import SearchRequest, LimitedSearch
 from fnc.view.view import View
 from test.copy_files.move_files import copy_found_invoices_to_target_dir
 
-
 def zostalem_powiadomiony(request: SearchRequest):
     print("----")
     print("Jestem kodem z maina, ktory dostal info z widoku, a widok dostał info z gui")
@@ -22,7 +21,7 @@ def zostalem_powiadomiony(request: SearchRequest):
 
     files_to_move, invoices_found = which_files_to_move(list_of_cases, mold, request.invoice_folder,
                                                         request.target_folder)
-    y = copy_found_invoices_to_target_dir(files_to_move)
+    copy_found_invoices_to_target_dir(files_to_move)
 
     update_excel_df(excel_df, invoices_found, request.excel_path)
 
@@ -30,8 +29,6 @@ def zostalem_powiadomiony(request: SearchRequest):
 
     print(files_to_move)
     print(invoices_found)
-    print(y)
-
 
 if __name__ == '__main__':
     view = View(zostalem_powiadomiony)
