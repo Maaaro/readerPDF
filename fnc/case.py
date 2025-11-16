@@ -13,19 +13,24 @@ class Case:
     workflowNumber: Optional[str]
 
 
+def remove_empty_Invoice_ID_rows_from_df(df: DataFrame) -> DataFrame:
+    df = df[df.Invoice_ID.notna() & (df.Invoice_ID != "")]
+    return df
+
 def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
     cases = []
     try:
         df = pd.read_excel(path, sheet_name=0, engine='openpyxl')
+        df_without_None = remove_empty_Invoice_ID_rows_from_df(df)
     except FileNotFoundError:
         raise Exception('Failed to open input cases file, file does not exist.')
-    for row_index, row_cells in df.iterrows():
-        if pd.isna(row_cells['Invoice_ID']):
-            raise Exception(f'Row #{row_index + 1} does not contain an invoice number.')
+    for row_index, row_cells in df_without_None.iterrows():
+        # if pd.isna(row_cells['Invoice_ID']):
+            # raise Exception(f'Row #{row_index + 1} does not contain an invoice number.')
         if pd.isna(row_cells['Lp']):
             raise Exception(f'Row #{row_index + 1} does not contain an LP number.')
         cases.append(convert_row_to_case(row_cells))
-    return cases, df
+    return cases, df_without_None
 
 
 def convert_row_to_case(row: pd.Series) -> Case:
