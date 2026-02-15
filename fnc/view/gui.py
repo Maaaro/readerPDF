@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+from typing import Callable
 
 from fnc.view.values import LimitedSearch
 
@@ -114,6 +115,8 @@ class GraphicalUserInterface:
     def close_progressbar_window(self):
         self.__progressbar_window.destroy()
 
+    def run_on_main_thread(self, func: Callable):
+        self.__root.after(0, func)
 
     def show_message(self, message:str):
         tk.messagebox.showinfo(title="Status", message=message)

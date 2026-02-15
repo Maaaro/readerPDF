@@ -41,3 +41,6 @@ class View:
 
     def close_progressbar_window(self):
         self.__gui.close_progressbar_window()
+
+    def run_on_main_thread(self, func: Callable):
+        self.__gui.run_on_main_thread(func)

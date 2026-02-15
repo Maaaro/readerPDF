@@ -1,4 +1,4 @@
-from openpyxl.styles.builtins import total
+import threading
 
 from fnc.case import read_input_cases, update_excel_df
 from fnc.domain import which_files_to_move, InvoiceSearchMode
@@ -25,24 +25,27 @@ def zostalem_powiadomiony(request: SearchRequest):
 
     view.show_progressbar_window(total)
 
-    files_to_move, invoices_found = which_files_to_move(
-        list_of_cases,
-        mold,
-        request.invoice_folder,
-        request.target_folder,
-        progressbar_callback = lambda current: view.update_progressbar(current, total)
-    )
+    def run():
+        files_to_move, invoices_found = which_files_to_move(
+            list_of_cases,
+            mold,
+            request.invoice_folder,
+            request.target_folder,
+            progressbar_callback=lambda current: view.run_on_main_thread(
+                lambda: view.update_progressbar(current, total))
+        )
+        copy_found_invoices_to_target_dir(files_to_move)
+        update_excel_df(excel_df, invoices_found, request.excel_path)
+        view.run_on_main_thread(view.close_progressbar_window())
+        view.run_on_main_thread(view.finished())
 
-    view.close_progressbar_window()
+        print("Program ma problem z wyszukiwaniem. przykład. Nr fv = 1234 - nie znajdzie. nr fv = '1234' - znajdzie")
 
-    copy_found_invoices_to_target_dir(files_to_move)
-    update_excel_df(excel_df, invoices_found, request.excel_path)
-    view.finished()
+        print(files_to_move)
+        print(invoices_found)
 
-    print("Program ma problem z wyszukiwaniem. przykład. Nr fv = 1234 - nie znajdzie. nr fv = '1234' - znajdzie")
-
-    print(files_to_move)
-    print(invoices_found)
+    thread = threading.Thread(target=run)
+    thread.start()
 
 
 if __name__ == '__main__':
