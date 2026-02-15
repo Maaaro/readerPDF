@@ -111,6 +111,9 @@ class GraphicalUserInterface:
         self.__progressbar_label.config(text=f"{current} / {total}")
         self.__root.update_idletasks()
 
+    def close_progress_window(self):
+        self.__progressbar_window.destroy()
+
 
     def show_message(self, message:str):
         tk.messagebox.showinfo(title="Status", message=message)
