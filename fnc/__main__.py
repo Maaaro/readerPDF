@@ -1,9 +1,11 @@
+from openpyxl.styles.builtins import total
+
 from fnc.case import read_input_cases, update_excel_df
 from fnc.domain import which_files_to_move, InvoiceSearchMode
-
 from fnc.view.values import SearchRequest, LimitedSearch
 from fnc.view.view import View
 from test.copy_files.move_files import copy_found_invoices_to_target_dir
+
 
 def zostalem_powiadomiony(request: SearchRequest):
     print("----")
@@ -23,7 +25,12 @@ def zostalem_powiadomiony(request: SearchRequest):
         list_of_cases,
         mold,
         request.invoice_folder,
-        request.target_folder)
+        request.target_folder,
+        progressbar_callback = lambda current: view.update_progressbar(current, total)
+    )
+
+    view.close_progressbar_window()
+
     copy_found_invoices_to_target_dir(files_to_move)
 
     update_excel_df(excel_df, invoices_found, request.excel_path)
@@ -34,6 +41,7 @@ def zostalem_powiadomiony(request: SearchRequest):
 
     print(files_to_move)
     print(invoices_found)
+
 
 if __name__ == '__main__':
     view = View(zostalem_powiadomiony)

@@ -13,18 +13,19 @@ class InvoiceSearchMode(Enum):
 def which_files_to_move(cases: list[Case],
                         mode: InvoiceSearchMode,
                         source: str,
-                        target: str) -> tuple[dict[str, str], list[str]]:
+                        target: str,
+                        progressbar_callback=None) -> tuple[dict[str, str], list[str]]:
     files_to_move = {}
     found_invoice_numbers = []
-    for case in cases:
+    for index, case in enumerate(cases):
         if mode == InvoiceSearchMode.BY_WORKFLOW_NUMBER:
             modified_source = os.path.join(source, case.workflowNumber).replace("\\", "/")
         else:
             modified_source = source
         found_invoices = find_invoices(modified_source, invoiceNumber=case.providerInvoiceNumber)
-        for index, invoice_file in enumerate(found_invoices):
+        for i, invoice_file in enumerate(found_invoices):
             if len(found_invoices) > 1:
-                suffix = '-' + str(index + 1)
+                suffix = '-' + str(i + 1)
             else:
                 suffix = ''
             source_path = make_source_path(modified_source, invoice_file)
@@ -33,6 +34,9 @@ def which_files_to_move(cases: list[Case],
                 files_to_move[source_path] = []
             files_to_move[source_path].append(target_path)
             found_invoice_numbers.append(case.providerInvoiceNumber)
+        if progressbar_callback:
+            progressbar_callback(index + 1)
+
     return files_to_move, (list(found_invoice_numbers))
 
 
