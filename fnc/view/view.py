@@ -3,6 +3,7 @@ from typing import Callable
 from fnc.view.gui import GraphicalUserInterface
 from fnc.view.values import SearchRequest
 
+
 class View:
     def __init__(self, perform_search: Callable[[SearchRequest], None]):
         self.__gui = GraphicalUserInterface(self)
@@ -33,14 +34,14 @@ class View:
     def finished(self):
         self.__gui.show_message("Program zakończył działanie.")
 
-    def show_progressbar_window(self, total: int):
-        self.__gui.show_progressbar_window(total)
+    def show_progressbar_window(self, total: int, on_close: Callable):
+        self.__gui.show_progressbar_window(total, on_close)
 
-    def update_progressbar(self, current:int, total: int):
+    def update_progressbar(self, current: int, total: int):
         self.__gui.update_progressbar(current, total)
 
     def close_progressbar_window(self):
         self.__gui.close_progressbar_window()
 
-    def run_on_main_thread(self, func: Callable):
-        self.__gui.run_on_main_thread(func)
+    def run_on_main_thread(self, func: Callable, *args):
+        self.__gui.run_on_main_thread(func, *args)

@@ -23,7 +23,13 @@ def zostalem_powiadomiony(request: SearchRequest):
     else:
         mold = InvoiceSearchMode.FULL
 
-    view.show_progressbar_window(total)
+    stop_event = threading.Event()
+
+    def on_close():
+        stop_event.set()
+        view.close_progressbar_window()
+
+    view.show_progressbar_window(total, on_close=on_close)
 
     def run():
         files_to_move, invoices_found = which_files_to_move(
@@ -32,12 +38,16 @@ def zostalem_powiadomiony(request: SearchRequest):
             request.invoice_folder,
             request.target_folder,
             progressbar_callback=lambda current: view.run_on_main_thread(
-                lambda c=current: view.update_progressbar(c, total))
+                lambda c=current: view.update_progressbar(c, total)),
+            stop_event=stop_event
         )
+        if stop_event.is_set():
+            return
+
         copy_found_invoices_to_target_dir(files_to_move)
         update_excel_df(excel_df, invoices_found, request.excel_path)
-        view.run_on_main_thread(view.close_progressbar_window())
-        view.run_on_main_thread(view.finished())
+        view.run_on_main_thread(view.close_progressbar_window)
+        view.run_on_main_thread(view.finished)
 
         print("Program ma problem z wyszukiwaniem. przykład. Nr fv = 1234 - nie znajdzie. nr fv = '1234' - znajdzie")
 

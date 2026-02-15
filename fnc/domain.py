@@ -1,4 +1,5 @@
 import os
+import threading
 from enum import Enum
 
 from fnc.case import Case
@@ -14,10 +15,13 @@ def which_files_to_move(cases: list[Case],
                         mode: InvoiceSearchMode,
                         source: str,
                         target: str,
-                        progressbar_callback=None) -> tuple[dict[str, str], list[str]]:
+                        progressbar_callback=None,
+                        stop_event: threading.Event = None) -> tuple[dict[str, str], list[str]]:
     files_to_move = {}
     found_invoice_numbers = []
     for index, case in enumerate(cases):
+        if stop_event and stop_event.is_set():
+            break
         if mode == InvoiceSearchMode.BY_WORKFLOW_NUMBER:
             modified_source = os.path.join(source, case.workflowNumber).replace("\\", "/")
         else:

@@ -4,6 +4,7 @@ from typing import Callable
 
 from fnc.view.values import LimitedSearch
 
+
 class GraphicalUserInterface:
     def __init__(self, view):
         self.__view = view
@@ -88,12 +89,13 @@ class GraphicalUserInterface:
 
         self.__root.mainloop()
 
-    def show_progressbar_window(self, total: int):
+    def show_progressbar_window(self, total: int, on_close: Callable):
         self.__progressbar_window = tk.Toplevel(self.__root)
         self.__progressbar_window.title("Progress...")
         self.__progressbar_window.resizable(False, False)
         self.__progressbar_window.grab_set()
         self.__center_on_main_window(self.__progressbar_window, 400, 100)
+        self.__progressbar_window.protocol("WM_DELETE_WINDOW", on_close)
 
         self.__progressbar_label = ttk.Label(self.__progressbar_window, text=f"0 / {total}")
         self.__progressbar_label.pack(pady=(15, 5))
@@ -119,10 +121,11 @@ class GraphicalUserInterface:
         self.__root.update_idletasks()
 
     def close_progressbar_window(self):
+        self.__progressbar_window.grab_release()
         self.__progressbar_window.destroy()
 
-    def run_on_main_thread(self, func: Callable):
-        self.__root.after(0, func)
+    def run_on_main_thread(self, func: Callable, *args):
+        self.__root.after(0, func, *args)
 
-    def show_message(self, message:str):
+    def show_message(self, message: str):
         tk.messagebox.showinfo(title="Status", message=message)
