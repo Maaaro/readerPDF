@@ -32,7 +32,7 @@ def zostalem_powiadomiony(request: SearchRequest):
             request.invoice_folder,
             request.target_folder,
             progressbar_callback=lambda current: view.run_on_main_thread(
-                lambda: view.update_progressbar(current, total))
+                lambda c=current: view.update_progressbar(c, total))
         )
         copy_found_invoices_to_target_dir(files_to_move)
         update_excel_df(excel_df, invoices_found, request.excel_path)

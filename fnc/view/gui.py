@@ -91,12 +91,12 @@ class GraphicalUserInterface:
     def show_progressbar_window(self, total: int):
         self.__progressbar_window = tk.Toplevel(self.__root)
         self.__progressbar_window.title("Progress...")
-        self.__progressbar_window.geometry("400x100")
         self.__progressbar_window.resizable(False, False)
         self.__progressbar_window.grab_set()
+        self.__center_on_main_window(self.__progressbar_window, 400, 100)
 
         self.__progressbar_label = ttk.Label(self.__progressbar_window, text=f"0 / {total}")
-        self.__progressbar_label.pack(pady=(15,5))
+        self.__progressbar_label.pack(pady=(15, 5))
 
         self.__progressbar = ttk.Progressbar(
             self.__progressbar_window,
@@ -106,6 +106,12 @@ class GraphicalUserInterface:
             maximum=total
         )
         self.__progressbar.pack(pady=5)
+
+    def __center_on_main_window(self, window: tk.Toplevel, width: int, height: int):
+        self.__root.update_idletasks()
+        x = self.__root.winfo_rootx() + (self.__root.winfo_width() // 2) - (width // 2)
+        y = self.__root.winfo_rooty() + (self.__root.winfo_height() // 2) - (height // 2)
+        window.geometry(f"{width}x{height}+{x}+{y}")
 
     def update_progressbar(self, current: int, total: int):
         self.__progressbar["value"] = current
