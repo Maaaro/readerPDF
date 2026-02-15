@@ -17,6 +17,7 @@ def remove_empty_Invoice_ID_rows_from_df(df: DataFrame) -> DataFrame:
     df = df[df.Invoice_ID.notna() & (df.Invoice_ID != "")]
     return df
 
+
 def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
     cases = []
     try:
@@ -26,7 +27,7 @@ def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
         raise Exception('Failed to open input cases file, file does not exist.')
     for row_index, row_cells in df_without_None.iterrows():
         # if pd.isna(row_cells['Invoice_ID']):
-            # raise Exception(f'Row #{row_index + 1} does not contain an invoice number.')
+        # raise Exception(f'Row #{row_index + 1} does not contain an invoice number.')
         if pd.isna(row_cells['Lp']):
             raise Exception(f'Row #{row_index + 1} does not contain an LP number.')
         cases.append(convert_row_to_case(row_cells))
@@ -47,17 +48,19 @@ def get_cell_optional(row: pd.Series, column: str) -> Optional[str]:
 
 
 def update_excel_df(main_df: DataFrame, found_invoices: list[str], excel_path: str) -> None:
-    if "Comments" in main_df.columns:
-        main_df = main_df.drop(columns="Comments")
-    df = merge_df_with_found_invoices(found_invoices, main_df)
-    df = df.fillna("File wasn't found")
-    try:
-        wb = load_workbook(excel_path)
-        sheet_name = wb.sheetnames[0]
-    except:
-        sheet_name = "Sheet1"
+    main_df = main_df.drop(columns="Comments", errors="ignore")
+    main_df["Comments"] = main_df["Invoice_ID"].apply(
+        lambda x: "File was found" if x in found_invoices else "File wasn't found")
 
-    df.to_excel(excel_path, sheet_name=sheet_name, engine="openpyxl", index=False)
+    try:
+        sheet_name = load_workbook(excel_path).sheetnames[0]
+    except Exception as e:
+        print(f"Could not load workbook: {e}")
+        sheet_name = "Sheet1"
+    try:
+        main_df.to_excel(excel_path, sheet_name=sheet_name, engine="openpyxl", index=False)
+    except Exception as e:
+        raise Exception(f"Failed to save excel file {e}")
 
 
 def merge_df_with_found_invoices(found_invoices: list[str], main_df: DataFrame) -> DataFrame:
