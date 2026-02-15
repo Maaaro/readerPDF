@@ -29,9 +29,11 @@ def which_files_to_move(cases: list[Case],
                 suffix = ''
             source_path = make_source_path(modified_source, invoice_file)
             target_path = make_source_path(target, (case.filePrefix + suffix + '.pdf'))
-            files_to_move[source_path] = target_path
+            if source_path not in files_to_move:
+                files_to_move[source_path] = []
+            files_to_move[source_path].append(target_path)
             found_invoice_numbers.append(case.providerInvoiceNumber)
-    return files_to_move, (list(set(found_invoice_numbers)))
+    return files_to_move, (list(found_invoice_numbers))
 
 
 def make_source_path(source: str, file: str) -> str:
