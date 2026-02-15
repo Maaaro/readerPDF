@@ -87,5 +87,25 @@ class GraphicalUserInterface:
 
         self.__root.mainloop()
 
+    def show_progressbar_window(self, total: int):
+        self.__progressbar_window = tk.Toplevel(self.__root)
+        self.__progressbar_window.title("Progress...")
+        self.__progressbar_window.geometry("400x100")
+        self.__progressbar_window.resizable(False, False)
+        self.__progressbar_window.grab_set()
+
+        self.__progressbar_label = ttk.Label(self.__progressbar_window, text=f"0 /{total}")
+        self.__progressbar_label.pack(pady=(15,5))
+
+        self.__progress_bar = ttk.Progressbar(
+            self.__progressbar_window,
+            orient="horizontal",
+            length=350,
+            mode="determinate",
+            maximum=total
+        )
+
+        self.__progress_bar.pack(pady=5)
+
     def show_message(self, message:str):
         tk.messagebox.showinfo(title="Status", message=message)
