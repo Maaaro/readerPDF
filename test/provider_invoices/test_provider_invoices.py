@@ -12,10 +12,10 @@ def test_directory_without_provider_invoices_is_invalid():
 
 def test_file_containing_invoice_number_is_returned():
     path = project_path('provider_invoices/fixture/invoices')
-    found_invoices, _ = find_invoices(path, '100156909563/RA/2024')
+    found_invoices = find_invoices(path, '100156909563/RA/2024')
     assert found_invoices == ['100156909563.pdf']
 
 def test_file_containing_invoice_number_in_subfolder():
     path = project_path('provider_invoices/fixture/invoices_in_subfolder/')
-    found_invoices, _ = find_invoices(path, 'PL3654810710')
+    found_invoices= find_invoices(path, 'PL3654810710')
     assert found_invoices == ['subfolder1/decathlon-invoice-12300750000756593.pdf']
