@@ -32,4 +32,12 @@ class View:
 
     def finished(self):
         self.__gui.show_message("Program zakończył działanie.")
-        pass
+
+    def show_progressbar_window(self, total: int):
+        self.__gui.show_progressbar_window(total)
+
+    def update_progressbar(self, current:int, total: int):
+        self.__gui.update_progressbar(current, total)
+
+    def close_progressbar_window(self):
+        self.__gui.close_progressbar_window()

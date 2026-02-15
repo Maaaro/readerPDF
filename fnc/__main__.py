@@ -16,10 +16,14 @@ def zostalem_powiadomiony(request: SearchRequest):
     print("Syrcz mołd: " + str(request.limited_search))
 
     list_of_cases, excel_df = read_input_cases(request.excel_path)
+    total = len(list_of_cases)
+
     if request.limited_search == LimitedSearch.LIMITED:
         mold = InvoiceSearchMode.BY_WORKFLOW_NUMBER
     else:
         mold = InvoiceSearchMode.FULL
+
+    view.show_progressbar_window(total)
 
     files_to_move, invoices_found = which_files_to_move(
         list_of_cases,
@@ -32,9 +36,7 @@ def zostalem_powiadomiony(request: SearchRequest):
     view.close_progressbar_window()
 
     copy_found_invoices_to_target_dir(files_to_move)
-
     update_excel_df(excel_df, invoices_found, request.excel_path)
-
     view.finished()
 
     print("Program ma problem z wyszukiwaniem. przykład. Nr fv = 1234 - nie znajdzie. nr fv = '1234' - znajdzie")

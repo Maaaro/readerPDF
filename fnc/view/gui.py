@@ -94,24 +94,24 @@ class GraphicalUserInterface:
         self.__progressbar_window.resizable(False, False)
         self.__progressbar_window.grab_set()
 
-        self.__progressbar_label = ttk.Label(self.__progressbar_window, text=f"0 /{total}")
+        self.__progressbar_label = ttk.Label(self.__progressbar_window, text=f"0 / {total}")
         self.__progressbar_label.pack(pady=(15,5))
 
-        self.__progress_bar = ttk.Progressbar(
+        self.__progressbar = ttk.Progressbar(
             self.__progressbar_window,
             orient="horizontal",
             length=350,
             mode="determinate",
             maximum=total
         )
-        self.__progress_bar.pack(pady=5)
+        self.__progressbar.pack(pady=5)
 
     def update_progressbar(self, current: int, total: int):
-        self.__progress_bar["value"] = current
+        self.__progressbar["value"] = current
         self.__progressbar_label.config(text=f"{current} / {total}")
         self.__root.update_idletasks()
 
-    def close_progress_window(self):
+    def close_progressbar_window(self):
         self.__progressbar_window.destroy()
 
 
