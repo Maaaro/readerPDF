@@ -104,8 +104,13 @@ class GraphicalUserInterface:
             mode="determinate",
             maximum=total
         )
-
         self.__progress_bar.pack(pady=5)
+
+    def update_progressbar(self, current: int, total: int):
+        self.__progress_bar["value"] = current
+        self.__progressbar_label.config(text=f"{current} / {total}")
+        self.__root.update_idletasks()
+
 
     def show_message(self, message:str):
         tk.messagebox.showinfo(title="Status", message=message)
