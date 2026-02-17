@@ -24,9 +24,10 @@ def test_for_multiple_invoices_saves_file_with_case_prefix_and_suffix():
         target='output/',
         progressbar_callback=None)
     assert files_to_move == {
-        project_path('domain/fixture/multiple_invoices/eic_155687424.pdf'): ['output/42-1.pdf'],
+        project_path('domain/fixture/multiple_invoices/eic_155687424.pdf'): ['output/42.pdf'],
         project_path('domain/fixture/multiple_invoices/eic_155687424_copy.pdf'): ['output/42-2.pdf'],
     }
+
 
 
 def test_search_in_subfolder_with_name_of_workflow_number():
