@@ -75,5 +75,6 @@ def which_files_to_move(cases: list[Case],
 
     return files_to_move, list(found_invoice_numbers)
 
+
 def make_source_path(source: str, file: str) -> str:
     return os.path.join(source, file).replace("\\", "/")

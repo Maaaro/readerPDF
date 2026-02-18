@@ -40,6 +40,7 @@ def test_remove_rows_with_empty_invoice_ID():
     ]
     cleanup_test_file(test_path)
 
+
 def test_empty_lp_number_in_any_row_is_malformed_file():
     test_path = project_path("input_cases/fixture/inputCases.emptyLpNumber.xlsx")
     df = create_df_with_empty_Lp_number()
@@ -79,22 +80,25 @@ def create_df_with_empty_Invoice_number() -> DataFrame:
 def create_complex_df() -> DataFrame:
     data = {
         "Lp": ["1", "2", "3", "4", "5", "6", "7"],
-        "Invoice_ID": ["FV/2022/08/1253/3/11034", "eIC155687424", "100156909563/RA/2024", "PL3654810710", "F/000895/23/RO",
-                  "26908/BR/2023", "8492"],
+        "Invoice_ID": ["FV/2022/08/1253/3/11034", "eIC155687424", "100156909563/RA/2024", "PL3654810710",
+                       "F/000895/23/RO",
+                       "26908/BR/2023", "8492"],
         "WF": ["wf1", "wf2", "", "", "", "", "wf7"],
     }
     df = pd.DataFrame(data)
     return df
 
+
 def create_df_with_empty_Invoice_number_to_remove():
     data = {
         "Lp": ["1", "2", "3", "4", "5", "6", "7"],
         "Invoice_ID": ["FV/2022/08/1253/3/11034", None, "100156909563/RA/2024", "PL3654810710", "F/000895/23/RO",
-                  None, "8492"],
+                       None, "8492"],
         "WF": ["wf1", "wf2", "", "", "", "", "wf7"],
     }
     df = pd.DataFrame(data)
     return df
+
 
 def create_excel_file(df: DataFrame, path: str) -> None:
     path = Path(path)

@@ -25,7 +25,7 @@ def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
         df_without_none = remove_empty_invoice_id_rows_from_df(df)
     except FileNotFoundError:
         raise Exception('Failed to open input cases file, file does not exist.')
-    for i,(row_index, row_cells) in enumerate(df_without_none.iterrows()):
+    for i, (row_index, row_cells) in enumerate(df_without_none.iterrows()):
         if pd.isna(row_cells['Lp']):
             raise Exception(f'Row #{i + 1} does not contain an LP number.')
         cases.append(convert_row_to_case(row_cells))

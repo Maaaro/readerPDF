@@ -7,6 +7,9 @@ from fnc.view.values import LimitedSearch
 
 class GraphicalUserInterface:
     def __init__(self, view):
+        self.__progressbar_label = None
+        self.__progressbar_window = None
+        self.__progressbar = None
         self.__view = view
         self.__root = tk.Tk()
         self.__fields = [
