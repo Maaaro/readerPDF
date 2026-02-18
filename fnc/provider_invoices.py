@@ -46,9 +46,6 @@ def directory_files(path: str) -> list[str]:
     files = []
     for root, subFolders, filenames in os.walk(path):
         for file in filenames:
-            # if file.endswith(".pdf"):
-            #     root = root.replace("\\","/")
-            #     files.append(directory_file(path, root, file))
             if file.endswith(".pdf"):
                 rel_path = os.path.relpath(os.path.join(root, file), path)
                 rel_path = rel_path.replace("\\", "/")

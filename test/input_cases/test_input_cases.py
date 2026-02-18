@@ -40,16 +40,6 @@ def test_remove_rows_with_empty_invoice_ID():
     ]
     cleanup_test_file(test_path)
 
-# def test_empty_invoice_number_in_any_row_is_malformed_file():
-#     test_path = project_path("input_cases/fixture/inputCases.emptyInvoiceNumber.xlsx")
-#     df = create_df_with_empty_Invoice_number()
-#     create_excel_file(df, test_path)
-#     with raises(Exception) as exception_info:
-#         input_cases, _ = read_input_cases(test_path)
-#     assert str(exception_info.value) == 'Row #1 does not contain an invoice number.'
-#     cleanup_test_file(test_path)
-
-
 def test_empty_lp_number_in_any_row_is_malformed_file():
     test_path = project_path("input_cases/fixture/inputCases.emptyLpNumber.xlsx")
     df = create_df_with_empty_Lp_number()
