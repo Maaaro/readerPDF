@@ -4,7 +4,8 @@ from enum import Enum
 from typing import Any
 
 from fnc.case import Case
-from fnc.provider_invoices import is_dir_empty, is_there_any_pdf_files, directory_files, read_pdf_content
+from fnc.provider_invoices import is_dir_empty, is_there_any_pdf_files, directory_files
+from fnc.read_pdf import read_pdf_content
 
 
 class InvoiceSearchMode(Enum):

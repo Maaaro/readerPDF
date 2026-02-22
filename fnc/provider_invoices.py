@@ -1,7 +1,5 @@
 import os
 
-import pymupdf
-
 
 def is_there_any_pdf_files(path: str) -> bool:
     for root, subFolders, filenames in os.walk(path):
@@ -9,14 +7,6 @@ def is_there_any_pdf_files(path: str) -> bool:
             if filename.endswith(".pdf"):
                 return True
     return False
-
-
-def read_pdf_content(pdf_path: str) -> str:
-    with pymupdf.open(pdf_path) as pdf_file:
-        content = ''
-        for page in pdf_file:
-            content += page.get_text().strip()
-        return content
 
 
 def directory_files(path: str) -> list[str]:
