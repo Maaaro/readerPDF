@@ -57,7 +57,7 @@ class GraphicalUserInterface:
 
         text = 'Wejściowy arkusz musi zawierać zakładkę "Sheet1", która zawiera kolumny: \n' + \
                ' - "Lp" - na podstawie, której przypisze nową nazwę,\n' + \
-               ' - "Nr fv" - numer faktury, który ma zostać znaleziony,\n' + \
+               ' - "Invoice_ID" - numer faktury, który ma zostać znaleziony,\n' + \
                ' - "WF" - numer sprawy w WorkFlow - do ograniczenia wyszukiwania (dotyczy tylko fv).'
 
         top_label = tk.Label(main_frame, justify='left', text=text)
