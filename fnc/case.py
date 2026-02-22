@@ -44,7 +44,7 @@ def get_cell_optional(row: pd.Series, column: str) -> Optional[str]:
     return str(row[column])
 
 
-def update_excel_df(main_df: DataFrame, found_invoices: list[str], excel_path: str) -> None:
+def update_excel_df(main_df: DataFrame, found_invoices: list[str], excel_path: str):
     df = main_df.copy()
 
     df["Comments"] = df["Invoice_ID"].apply(
