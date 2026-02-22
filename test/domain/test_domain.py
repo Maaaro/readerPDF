@@ -29,7 +29,6 @@ def test_for_multiple_invoices_saves_file_with_case_prefix_and_suffix():
     }
 
 
-
 def test_search_in_subfolder_with_name_of_workflow_number():
     files_to_move, _ = which_files_to_move(
         cases=[Case('eIC155687424', '420', "wf1")],

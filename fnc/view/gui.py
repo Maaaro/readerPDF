@@ -93,24 +93,30 @@ class GraphicalUserInterface:
         self.__root.mainloop()
 
     def show_progressbar_window(self, total: int, on_close: Callable):
-        self.__progressbar_window = tk.Toplevel(self.__root)
-        self.__progressbar_window.title("Progress...")
-        self.__progressbar_window.resizable(False, False)
-        self.__progressbar_window.grab_set()
-        self.__center_on_main_window(self.__progressbar_window, 400, 100)
-        self.__progressbar_window.protocol("WM_DELETE_WINDOW", on_close)
+        print(f"🔵 Creating progress window with total={total}")
+        try:
+            self.__progressbar_window = tk.Toplevel(self.__root)
+            self.__progressbar_window.title("Progress...")
+            self.__progressbar_window.resizable(False, False)
+            self.__progressbar_window.grab_set()
+            self.__center_on_main_window(self.__progressbar_window, 400, 100)
+            self.__progressbar_window.protocol("WM_DELETE_WINDOW", on_close)
 
-        self.__progressbar_label = ttk.Label(self.__progressbar_window, text=f"0 / {total}")
-        self.__progressbar_label.pack(pady=(15, 5))
+            self.__progressbar_label = ttk.Label(self.__progressbar_window, text=f"0 / {total}")
+            self.__progressbar_label.pack(pady=(15, 5))
 
-        self.__progressbar = ttk.Progressbar(
-            self.__progressbar_window,
-            orient="horizontal",
-            length=350,
-            mode="determinate",
-            maximum=total
-        )
-        self.__progressbar.pack(pady=5)
+            self.__progressbar = ttk.Progressbar(
+                self.__progressbar_window,
+                orient="horizontal",
+                length=350,
+                mode="determinate",
+                maximum=total
+            )
+            self.__progressbar.pack(pady=5)
+            print("🟢 Progress window created successfully")
+        except Exception as e:
+            print(f"🔴 ERROR creating progress window: {e}")
+            raise
 
     def __center_on_main_window(self, window: tk.Toplevel, width: int, height: int):
         self.__root.update_idletasks()

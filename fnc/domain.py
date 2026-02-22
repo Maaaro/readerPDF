@@ -17,25 +17,16 @@ def which_files_to_move(cases: list[Case],
                         target: str,
                         progressbar_callback=None,
                         stop_event: threading.Event = None) -> tuple[dict[str, list[str]], list[str]]:
+    print("🔵 which_files_to_move CALLED")
     files_to_move = {}
     found_invoice_numbers = []
 
     # ✅ Track matches per case using filePrefix as key instead of Case object
     matches_per_case = {case.filePrefix: 0 for case in cases}
 
-    # ✅ Group cases by their search directory
-    cases_by_directory = {}
-    for case in cases:
-        if mode == InvoiceSearchMode.BY_WORKFLOW_NUMBER:
-            directory = os.path.join(source, case.workflowNumber).replace("\\", "/")
-        else:
-            directory = source
+    cases_by_directory = get_search_directories(cases, mode, source)
 
-        if directory not in cases_by_directory:
-            cases_by_directory[directory] = []
-        cases_by_directory[directory].append(case)
-
-    processed_cases = 0
+    processed_pdfs = 0
 
     # ✅ For each directory, read each PDF once and check all invoice numbers
     for directory, directory_cases in cases_by_directory.items():
@@ -49,14 +40,19 @@ def which_files_to_move(cases: list[Case],
 
         # ✅ Read each PDF once
         for file in directory_files(directory):
+            print(f"Processing PDF {processed_pdfs + 1}: {file}")
+
             if stop_event and stop_event.is_set():
+                print("STOP EVENT SET!")
                 break
 
             full_path = make_source_path(directory, file)
-            content = read_pdf_content(full_path)  # ✅ Read once!
+            content = read_pdf_content(full_path)
 
             # ✅ Check all invoice numbers from cases in this directory
             for case in directory_cases:
+
+
                 if case.providerInvoiceNumber in content:
                     matches_per_case[case.filePrefix] += 1
                     match_count = matches_per_case[case.filePrefix]
@@ -69,12 +65,29 @@ def which_files_to_move(cases: list[Case],
                     files_to_move[full_path].append(target_path)
                     found_invoice_numbers.append(case.providerInvoiceNumber)
 
-        processed_cases += len(directory_cases)
-        if progressbar_callback:
-            progressbar_callback(processed_cases)
+            processed_pdfs += 1
+            print(f"Finished processing, calling callback with {processed_pdfs}")
+            if progressbar_callback:
+                progressbar_callback(processed_pdfs)
 
     return files_to_move, list(found_invoice_numbers)
 
 
 def make_source_path(source: str, file: str) -> str:
     return os.path.join(source, file).replace("\\", "/")
+
+
+def get_search_directories(cases: list[Case], mode: InvoiceSearchMode, source: str) -> dict[str, list[Case]]:
+    cases_by_directory = {}
+
+    for case in cases:
+        if mode == InvoiceSearchMode.BY_WORKFLOW_NUMBER:
+            directory = os.path.join(source, case.workflowNumber).replace("\\", "/")
+        else:
+            directory = source
+
+        if directory not in cases_by_directory:
+            cases_by_directory[directory] = []
+        cases_by_directory[directory].append(case)
+
+    return cases_by_directory
