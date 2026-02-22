@@ -17,18 +17,17 @@ def which_files_to_move(cases: list[Case],
                         target: str,
                         progressbar_callback=None,
                         stop_event: threading.Event = None) -> tuple[dict[str, list[str]], list[str]]:
-    print("🔵 which_files_to_move CALLED")
     files_to_move = {}
     found_invoice_numbers = []
 
-    # ✅ Track matches per case using filePrefix as key instead of Case object
+    # Track matches per case using filePrefix as key instead of Case object
     matches_per_case = {case.filePrefix: 0 for case in cases}
 
     cases_by_directory = get_search_directories(cases, mode, source)
 
     processed_pdfs = 0
 
-    # ✅ For each directory, read each PDF once and check all invoice numbers
+    # For each directory, read each PDF once and check all invoice numbers
     for directory, directory_cases in cases_by_directory.items():
         if stop_event and stop_event.is_set():
             break
@@ -38,7 +37,7 @@ def which_files_to_move(cases: list[Case],
         if not is_there_any_pdf_files(directory):
             raise Exception(f'Provider invoice directory does not contain invoices: {directory}')
 
-        # ✅ Read each PDF once
+        # Read each PDF once
         for file in directory_files(directory):
             print(f"Processing PDF {processed_pdfs + 1}: {file}")
 
@@ -49,9 +48,8 @@ def which_files_to_move(cases: list[Case],
             full_path = make_source_path(directory, file)
             content = read_pdf_content(full_path)
 
-            # ✅ Check all invoice numbers from cases in this directory
+            # Check all invoice numbers from cases in this directory
             for case in directory_cases:
-
 
                 if case.providerInvoiceNumber in content:
                     matches_per_case[case.filePrefix] += 1
@@ -66,7 +64,6 @@ def which_files_to_move(cases: list[Case],
                     found_invoice_numbers.append(case.providerInvoiceNumber)
 
             processed_pdfs += 1
-            print(f"Finished processing, calling callback with {processed_pdfs}")
             if progressbar_callback:
                 progressbar_callback(processed_pdfs)
 
