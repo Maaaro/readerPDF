@@ -59,17 +59,3 @@ def update_excel_df(main_df: DataFrame, found_invoices: list[str], excel_path: s
         main_df.to_excel(excel_path, sheet_name=sheet_name, engine="openpyxl", index=False)
     except Exception as e:
         raise Exception(f"Failed to save excel file {e}")
-
-
-def merge_df_with_found_invoices(found_invoices: list[str], main_df: DataFrame) -> DataFrame:
-    found_invoices_df = change_list_to_df(found_invoices)
-    inner_join = pd.merge(main_df, found_invoices_df[["invoice_number", "Comments"]], left_on="Invoice_ID",
-                          right_on="invoice_number",
-                          how="left").drop(columns="invoice_number")
-    return inner_join
-
-
-def change_list_to_df(found_invoices: list[str]) -> DataFrame:
-    found_invoices_df = pd.DataFrame(found_invoices, columns=["invoice_number"])
-    found_invoices_df["Comments"] = "File was found"
-    return found_invoices_df
