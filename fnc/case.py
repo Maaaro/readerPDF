@@ -14,8 +14,7 @@ class Case:
 
 
 def remove_empty_invoice_id_rows_from_df(df: DataFrame) -> DataFrame:
-    df = df[df.Invoice_ID.notna() & (df.Invoice_ID != "")]
-    return df
+    return df[df.Invoice_ID.notna() & (df.Invoice_ID != "")]
 
 
 def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
@@ -42,14 +41,14 @@ def convert_row_to_case(row: pd.Series) -> Case:
 def get_cell_optional(row: pd.Series, column: str) -> Optional[str]:
     if pd.isna(row[column]):
         return None
-    return row[column]
+    return str(row[column])
 
 
 def update_excel_df(main_df: DataFrame, found_invoices: list[str], excel_path: str) -> None:
-    main_df = main_df.drop(columns="Comments", errors="ignore")
-    main_df["Comments"] = main_df["Invoice_ID"].apply(
-        lambda x: "File was found" if x in found_invoices else "File wasn't found")
+    df = main_df.copy()
 
+    df["Comments"] = df["Invoice_ID"].apply(
+        lambda x: "File was found" if x in found_invoices else "File wasn't found")
     try:
         sheet_name = load_workbook(excel_path).sheetnames[0]
     except Exception as e:
