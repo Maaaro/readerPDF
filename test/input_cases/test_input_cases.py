@@ -26,9 +26,9 @@ def test_parse_input_cases_from_xlsx_file():
     cleanup_test_file(test_path)
 
 
-def test_remove_rows_with_empty_invoice_ID():
+def test_remove_rows_with_empty_invoice_id():
     test_path = project_path("input_cases/fixture/inputCases.empty_invoice_id.xlsx")
-    df = create_df_with_empty_Invoice_number_to_remove()
+    df = create_df_with_empty_invoice_number_to_remove()
     create_excel_file(df, test_path)
     input_cases, _ = read_input_cases(test_path)
     assert input_cases == [
@@ -43,7 +43,7 @@ def test_remove_rows_with_empty_invoice_ID():
 
 def test_empty_lp_number_in_any_row_is_malformed_file():
     test_path = project_path("input_cases/fixture/inputCases.emptyLpNumber.xlsx")
-    df = create_df_with_empty_Lp_number()
+    df = create_df_with_empty_lp_number()
     create_excel_file(df, test_path)
     with raises(Exception) as exception_info:
         input_cases, _ = read_input_cases(test_path)
@@ -57,7 +57,7 @@ def test_reading_a_missing_file_raises_exception():
     assert str(exception_info.value) == 'Failed to open input cases file, file does not exist.'
 
 
-def create_df_with_empty_Lp_number() -> DataFrame:
+def create_df_with_empty_lp_number() -> DataFrame:
     data = {
         "Lp": [None],
         "Invoice_ID": ["FV/2025/21"],
@@ -67,7 +67,7 @@ def create_df_with_empty_Lp_number() -> DataFrame:
     return df
 
 
-def create_df_with_empty_Invoice_number() -> DataFrame:
+def create_df_with_empty_invoice_number() -> DataFrame:
     data = {
         "Lp": ["1"],
         "Invoice_ID": [None],
@@ -77,7 +77,7 @@ def create_df_with_empty_Invoice_number() -> DataFrame:
     return df
 
 
-def create_complex_df() -> DataFrame:
+def create_complex_df() -> pd.DataFrame:
     data = {
         "Lp": ["1", "2", "3", "4", "5", "6", "7"],
         "Invoice_ID": ["FV/2022/08/1253/3/11034", "eIC155687424", "100156909563/RA/2024", "PL3654810710",
@@ -89,7 +89,7 @@ def create_complex_df() -> DataFrame:
     return df
 
 
-def create_df_with_empty_Invoice_number_to_remove():
+def create_df_with_empty_invoice_number_to_remove():
     data = {
         "Lp": ["1", "2", "3", "4", "5", "6", "7"],
         "Invoice_ID": ["FV/2022/08/1253/3/11034", None, "100156909563/RA/2024", "PL3654810710", "F/000895/23/RO",
@@ -100,7 +100,7 @@ def create_df_with_empty_Invoice_number_to_remove():
     return df
 
 
-def create_excel_file(df: DataFrame, path: str) -> None:
+def create_excel_file(df: pd.DataFrame, path: str) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_excel(path, index=False, engine="openpyxl")
