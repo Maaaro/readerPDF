@@ -31,6 +31,16 @@ def read_input_cases(path: str) -> tuple[list[Case], DataFrame]:
     return cases, df_without_none
 
 
+def is_excel_file_open(excel_path: str) -> bool:
+    try:
+        with open(excel_path, 'r+b'):
+            return False
+    except PermissionError:
+        return True
+    except FileNotFoundError:
+        return False
+
+
 def convert_row_to_case(row: pd.Series) -> Case:
     return Case(
         providerInvoiceNumber=str(row['Invoice_ID']),

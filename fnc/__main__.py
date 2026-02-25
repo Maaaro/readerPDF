@@ -1,6 +1,6 @@
 import threading
 
-from fnc.case import read_input_cases, update_excel_df, Case
+from fnc.case import read_input_cases, update_excel_df, Case, is_excel_file_open
 from fnc.domain import which_files_to_move, InvoiceSearchMode, get_search_directories
 from fnc.provider_invoices import is_there_any_pdf_files, is_dir_empty, directory_files
 from fnc.view.values import SearchRequest, LimitedSearch
@@ -26,6 +26,9 @@ def zostalem_powiadomiony(request: SearchRequest):
     print("Docelowy: " + request.target_folder)
     print("Ścieżka excela: " + request.excel_path)
     print("Syrcz mołd: " + str(request.limited_search))
+
+    if is_excel_file_open(request.excel_path):
+        raise Exception("Plik Excel jest otwarty. Zamknij go przed uruchomieniem programu.")
 
     list_of_cases, excel_df = read_input_cases(request.excel_path)
 

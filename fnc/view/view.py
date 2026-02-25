@@ -24,12 +24,15 @@ class View:
             self.__gui.display_error(message)
             return
 
-        self.__perform_search(SearchRequest(
-            self.__gui.limited_search(),
-            self.__gui.invoice_directory(),
-            self.__gui.target_directory(),
-            self.__gui.excel_filename()
-        ))
+        try:
+            self.__perform_search(SearchRequest(
+                self.__gui.limited_search(),
+                self.__gui.invoice_directory(),
+                self.__gui.target_directory(),
+                self.__gui.excel_filename()
+            ))
+        except Exception as e:
+            self.__gui.display_error(str(e))
 
     def finished(self):
         self.__gui.show_message("Program zakończył działanie.")
