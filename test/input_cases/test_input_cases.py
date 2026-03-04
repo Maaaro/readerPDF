@@ -12,7 +12,7 @@ def test_parse_input_cases_from_xlsx_file():
     test_path = project_path("input_cases/fixture/inputCases.valid.xlsx")
     df = create_complex_df()
     create_excel_file(df, test_path)
-    input_cases, _ = read_input_cases(test_path)
+    input_cases, _, _ = read_input_cases(test_path)
 
     assert input_cases == [
         Case('FV/2022/08/1253/3/11034', '1', 'wf1'),
@@ -30,7 +30,7 @@ def test_remove_rows_with_empty_invoice_id():
     test_path = project_path("input_cases/fixture/inputCases.empty_invoice_id.xlsx")
     df = create_df_with_empty_invoice_number_to_remove()
     create_excel_file(df, test_path)
-    input_cases, _ = read_input_cases(test_path)
+    input_cases, _, _ = read_input_cases(test_path)
     assert input_cases == [
         Case('FV/2022/08/1253/3/11034', '1', 'wf1'),
         Case('100156909563/RA/2024', '3', None),
@@ -46,14 +46,14 @@ def test_empty_lp_number_in_any_row_is_malformed_file():
     df = create_df_with_empty_lp_number()
     create_excel_file(df, test_path)
     with raises(Exception) as exception_info:
-        input_cases, _ = read_input_cases(test_path)
+        input_cases, _, _ = read_input_cases(test_path)
     assert str(exception_info.value) == 'Row #1 does not contain an LP number.'
     cleanup_test_file(test_path)
 
 
 def test_reading_a_missing_file_raises_exception():
     with raises(Exception) as exception_info:
-        input_cases, _ = read_input_cases(project_path('input_cases/fixture/missing-file'))
+        input_cases, _, _ = read_input_cases(project_path('input_cases/fixture/missing-file'))
     assert str(exception_info.value) == 'Failed to open input cases file, file does not exist.'
 
 

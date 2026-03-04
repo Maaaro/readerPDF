@@ -30,7 +30,7 @@ def zostalem_powiadomiony(request: SearchRequest):
     if is_excel_file_open(request.excel_path):
         raise Exception("Plik Excel jest otwarty. Zamknij go przed uruchomieniem programu.")
 
-    list_of_cases, excel_df = read_input_cases(request.excel_path)
+    list_of_cases, excel_df, sheet_name = read_input_cases(request.excel_path)
 
     if request.limited_search == LimitedSearch.LIMITED:
         mold = InvoiceSearchMode.BY_WORKFLOW_NUMBER
@@ -47,7 +47,9 @@ def zostalem_powiadomiony(request: SearchRequest):
 
     view.show_progressbar_window(total_pdfs, on_close=on_close)
 
-    def run():
+    def run() -> None:
+
+        nonlocal list_of_cases, excel_df, sheet_name
 
         files_to_move, invoices_found = which_files_to_move(
             list_of_cases,
@@ -63,7 +65,7 @@ def zostalem_powiadomiony(request: SearchRequest):
             return
 
         copy_found_invoices_to_target_dir(files_to_move)
-        update_excel_df(excel_df, invoices_found, request.excel_path)
+        update_excel_df(excel_df, invoices_found, request.excel_path, sheet_name)
         view.run_on_main_thread(view.close_progressbar_window)
         view.run_on_main_thread(view.finished)
 
