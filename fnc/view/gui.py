@@ -7,6 +7,7 @@ from fnc.view.values import LimitedSearch
 
 class GraphicalUserInterface:
     def __init__(self, view):
+        self.__progressbar_closed = False
         self.__progressbar_label = None
         self.__progressbar_window = None
         self.__progressbar = None
@@ -100,6 +101,7 @@ class GraphicalUserInterface:
         self.__progressbar_window.grab_set()
         self.__center_on_main_window(self.__progressbar_window, 400, 100)
         self.__progressbar_window.protocol("WM_DELETE_WINDOW", on_close)
+        self.__progressbar_closed = False
 
         self.__progressbar_label = ttk.Label(self.__progressbar_window, text=f"0 / {total}")
         self.__progressbar_label.pack(pady=(15, 5))
@@ -120,13 +122,22 @@ class GraphicalUserInterface:
         window.geometry(f"{width}x{height}+{x}+{y}")
 
     def update_progressbar(self, current: int, total: int):
-        self.__progressbar["value"] = current
-        self.__progressbar_label.config(text=f"{current} / {total}")
-        self.__root.update_idletasks()
+        if self.__progressbar_closed:
+            return
+        try:
+            self.__progressbar["value"] = current
+            self.__progressbar_label.config(text=f"{current} / {total}")
+            self.__root.update_idletasks()
+        except tk.TclError:
+            self.__progressbar_closed = True
 
     def close_progressbar_window(self):
-        self.__progressbar_window.grab_release()
-        self.__progressbar_window.destroy()
+        self.__progressbar_closed = True
+        try:
+            self.__progressbar_window.grab_release()
+            self.__progressbar_window.destroy()
+        except(AttributeError, tk.TclError):
+            pass
 
     def run_on_main_thread(self, func: Callable, *args):
         self.__root.after(0, func, *args)
